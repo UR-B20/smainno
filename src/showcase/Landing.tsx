@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { cn } from '@/lib/cn'
 import { useReveal } from '@/hooks/useReveal'
+import { scrollToId } from '@/lib/scrollToId'
 import {
   ACCENT,
   BtnLink,
@@ -66,16 +67,17 @@ function Hero() {
           </p>
 
           <div className="flex flex-wrap items-center gap-3">
-            <BtnLink to="/project/fua-tracker" variant="primary" arrow>
-              Start with FUA Tracker
+            <BtnLink to="/project/digital-ips" variant="primary" arrow>
+              Start with Digital IPS
             </BtnLink>
-            <a
-              href="#projects"
+            <button
+              type="button"
+              onClick={() => scrollToId('projects')}
               className="inline-flex items-center gap-2 px-2 py-2.5 label-lg text-ink-400 transition-colors hover:text-brass-200"
             >
               All three projects
               <ArrowRight size={14} />
-            </a>
+            </button>
           </div>
         </div>
 
