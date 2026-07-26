@@ -2,9 +2,7 @@
  * Source of truth for the showcase narrative.
  *
  * Every string in this file is lifted from "SMA INNOVATION HUDDLE_15C4I.pptx"
- * (21 July 2026). Where the deck carried speaker notes they are kept verbatim
- * as `narration`, because they explain the design intent behind each screen far
- * better than any paraphrase would.
+ * (27 July 26).
  */
 
 export type ProjectId = 'digital-ips' | 'fua-tracker' | 'smartcheck'
@@ -15,10 +13,10 @@ export interface ScreenSpec {
   title: string
   /** The A / B / C callouts printed beside the screenshot in the deck. */
   callouts: { key: string; title: string; body: string }[]
-  /** Verbatim speaker note. */
-  narration?: string
   /** Route hash that deep-links the live replica to this screen. */
   demoScreen?: string
+  /** Looks up `public/slides/<project-id>-<slide>.png`, if that file exists. */
+  slide?: string
 }
 
 export interface Project {
@@ -60,12 +58,18 @@ export interface Project {
   tryThis: string[]
 }
 
+export const POC = {
+  appointment: 'Division Sergeant Major',
+  formation: '2 PDF',
+  blurb:
+    'To find out more about any of these projects, or if your unit is interested in onboarding one, get in touch.',
+} as const
+
 export const DECK = {
   title: 'Innovation Projects',
   subtitle: 'Capability Showcase',
-  date: '21 July 2026',
+  date: '27 July 26',
   classification: 'OFFICIAL / (OPEN)',
-  unit: 'SMA Innovation Huddle · 15C4I',
 } as const
 
 export const PROJECTS: Project[] = [
@@ -76,7 +80,7 @@ export const PROJECTS: Project[] = [
     tagline:
       'Digital workflow for informal punishment reporting, deliberation, and record-keeping.',
     premise:
-      'Informal punishment runs on chat threads and goodwill. Digital IPS puts the whole cycle — report, deliberate, record, coordinate — on one rail with the 24-hour mandate built into the clock rather than into someone’s memory.',
+      'Informal punishment runs on chat threads and goodwill. Digital IPS puts the cycle — report, record, oversee — on one rail, with the 24-hour mandate built into the clock rather than into someone’s memory.',
     status: 'FormSG + SharePoint pipeline',
     statusShort: 'FormSG + SharePoint',
     statusTone: 'live',
@@ -84,8 +88,8 @@ export const PROJECTS: Project[] = [
     capabilities: [
       'Structured intake',
       '24-hour mandate clock',
-      'Deliberation with precedent',
-      'Automatic downstream tasking',
+      'One searchable register',
+      'Unit-level oversight',
     ],
     problem: {
       eyebrow: 'Current pain points',
@@ -118,22 +122,21 @@ export const PROJECTS: Project[] = [
       proofs: [
         'A structured report instead of a chat message',
         'A mandate clock that counts down in the open',
-        'Precedent on the deliberation screen, not in someone’s head',
-        'Downstream tasking raised the moment an award is made',
+        'One register you can search, filter and account for',
+        'Awards and execution status on the same record',
       ],
     },
     flow: {
       eyebrow: 'How it works',
       headline: 'From incident to closed record.',
       subhead:
-        'The deck’s pipeline — FormSG in, SharePoint list as the register, dashboard on top — with the deliberation and coordination steps that sit between them.',
+        'FormSG in, a SharePoint list as the register, a dashboard on top — with the 24-hour mandate running across all three.',
       steps: [
         { index: '01', title: 'Report', body: 'FormSG intake, structured' },
         { index: '02', title: 'Register', body: 'Lands in the SharePoint list' },
-        { index: '03', title: 'Deliberate', body: 'Decide against precedent' },
-        { index: '04', title: 'Record', body: 'Award recorded within 24h' },
-        { index: '05', title: 'Coordinate', body: 'Downstream tasks raised' },
-        { index: '06', title: 'Dashboard', body: 'Unit-level oversight' },
+        { index: '03', title: 'Record', body: 'Award recorded within 24h' },
+        { index: '04', title: 'Execute', body: 'Status tracked to closure' },
+        { index: '05', title: 'Dashboard', body: 'Unit-level oversight' },
       ],
       kicker:
         'The mandate clock runs from the moment of the incident, not from the moment somebody opens the file.',
@@ -160,6 +163,7 @@ export const PROJECTS: Project[] = [
           },
         ],
         demoScreen: 'intake',
+        slide: 'intake',
       },
       {
         eyebrow: 'Screen 02 · Register',
@@ -182,56 +186,36 @@ export const PROJECTS: Project[] = [
           },
         ],
         demoScreen: 'register',
+        slide: 'register',
       },
       {
-        eyebrow: 'Screen 03 · Deliberation',
-        title: 'Decide with precedent on the same screen',
+        eyebrow: 'Screen 03 · Oversight',
+        title: 'Dashboard — the unit-level view',
         callouts: [
           {
             key: 'A',
-            title: 'Case context locked left',
-            body: 'The report, the particulars and the countdown stay in view while you decide.',
+            title: 'Counts that answer the obvious questions',
+            body: 'How many cases, by offence, by subject, by award — read straight off the register rather than tallied by hand.',
           },
           {
             key: 'B',
-            title: 'Prior records, matched',
-            body: 'Previous awards for the same offence category surface automatically, with what was awarded and by whom.',
+            title: 'Execution status',
+            body: 'Completed against outstanding, so a commander can see what is still owed rather than only what was decided.',
           },
           {
             key: 'C',
-            title: 'Award and rationale',
-            body: 'Both are recorded together — the decision and the reason behind it.',
+            title: 'One source underneath',
+            body: 'The dashboard sits on the same register the intake feeds, so there is no second set of numbers to reconcile.',
           },
         ],
-        demoScreen: 'deliberate',
-      },
-      {
-        eyebrow: 'Screen 04 · Coordination',
-        title: 'Downstream tasking raises itself',
-        callouts: [
-          {
-            key: 'A',
-            title: 'Extra duty planner',
-            body: 'Extra duties are pushed to the planner with dates already computed from the award.',
-          },
-          {
-            key: 'B',
-            title: 'Ration indent',
-            body: 'Confinement awards raise a ration indent automatically instead of a manual message.',
-          },
-          {
-            key: 'C',
-            title: 'Acknowledged, not assumed',
-            body: 'Each downstream party acknowledges in the record, so coordination is provable.',
-          },
-        ],
-        demoScreen: 'coordination',
+        demoScreen: 'dashboard',
+        slide: 'dashboard',
       },
     ],
     tryThis: [
       'File a fresh report on the intake form and watch it appear in the register with a live mandate countdown.',
-      'Open a case under deliberation — prior awards for that offence category are pulled in beside it.',
-      'Award a punishment and see the extra duty and ration indent tasks raise themselves.',
+      'Open a case from the register and record the award against it — inside the 24-hour window.',
+      'Mark an award executed and watch the case close out.',
       'Use the clock control to jump forward and watch a case breach the 24-hour mandate.',
     ],
   },
@@ -320,9 +304,8 @@ export const PROJECTS: Project[] = [
             body: 'Every status change, straight from the immutable update log.',
           },
         ],
-        narration:
-          'This is what a team leader sees first. It’s a dashboard, not a launcher. Top row: the four numbers that matter — open FUAs, due within 7 days, overdue, completed. The ‘Needs attention’ panel pulls everything overdue or blocked into one triage list. On the right, a live activity ledger reads straight from the audit log, so you can see who did what without opening anything. Members don’t see the leader-only items — the menu adapts to your role.',
         demoScreen: 'overview',
+        slide: 'overview',
       },
       {
         eyebrow: 'Screen 02 · For everyone',
@@ -344,9 +327,8 @@ export const PROJECTS: Project[] = [
             body: 'Open any row to post progress — no hunting through lists.',
           },
         ],
-        narration:
-          'This is the screen most of you will live in — it’s just your work. Everything assigned to you, grouped by status, with live counts on the tabs. The colour coding does the nagging for you: a red edge means it’s overdue, amber means it’s due within a week, and a brass tick flags high priority. Tap any row to post an update. That’s it — you don’t need to understand the rest of the system to do your part.',
         demoScreen: 'my-subtasks',
+        slide: 'my-subtasks',
       },
       {
         eyebrow: 'Screen 03 · The one thing you do',
@@ -368,9 +350,8 @@ export const PROJECTS: Project[] = [
             body: 'Each update is a timestamped, immutable line in the audit trail.',
           },
         ],
-        narration:
-          'The heart of the app. When you open a subtask, the locked ‘tasking’ panel on the left keeps the context in front of you: the reference, the due date, and the actual last entry, so you’re never guessing. You pick the new status and the app shows the transition — here, In Progress to Blocked — before you commit. The bit that matters for us: nothing is overwritten. Every update is appended as its own timestamped, immutable record. You build history; you never erase it. That’s the audit trail.',
         demoScreen: 'my-subtasks',
+        slide: 'post-update',
       },
       {
         eyebrow: 'Screen 04 · For team leaders',
@@ -392,14 +373,13 @@ export const PROJECTS: Project[] = [
             body: 'The FUA number is assigned on commit — no manual numbering to get wrong.',
           },
         ],
-        narration:
-          'This is how a leader creates a new action. It’s laid out like a work order — numbered sections for particulars, meeting context, and priority & timeline, so nothing’s forgotten. The panel on the right is a live ‘before you commit’ checklist: notice the commit button is greyed out because the due date is still empty. You literally can’t raise a half-finished FUA. And the reference number is assigned automatically on commit — no manual numbering. Step two, assigning subtasks, reuses the same screen.',
         demoScreen: 'raise',
+        slide: 'raise',
       },
     ],
     closing: {
       title: 'Use cases & onboarding',
-      body: 'The best part: there’s almost nothing to learn. It lives in Teams — open it like any other tab. Where we are: the data foundations are built and tested; the app and the automation you saw are being wired up now. Next is a pilot with this team, and that’s the ask — I want your questions, ideas, and gripes, because we can still shape it before it goes wider.',
+      body: 'The best part: there’s almost nothing to learn. It lives in Teams — open it like any other tab. Where we are: the data foundations are built and tested; the app and the automation you saw are being wired up now.',
     },
     tryThis: [
       'Raise an FUA — the commit button stays locked until the live checklist is satisfied, and the reference number is assigned for you.',
@@ -504,6 +484,7 @@ export const PROJECTS: Project[] = [
           },
         ],
         demoScreen: 'checker',
+        slide: 'checker',
       },
       {
         eyebrow: 'Team · Issue tracker',
@@ -526,6 +507,7 @@ export const PROJECTS: Project[] = [
           },
         ],
         demoScreen: 'issues',
+        slide: 'issues',
       },
       {
         eyebrow: 'Admin · Dashboard',
@@ -548,6 +530,7 @@ export const PROJECTS: Project[] = [
           },
         ],
         demoScreen: 'dashboard',
+        slide: 'dashboard',
       },
       {
         eyebrow: 'Admin · Template builder',
@@ -570,6 +553,7 @@ export const PROJECTS: Project[] = [
           },
         ],
         demoScreen: 'builder',
+        slide: 'builder',
       },
       {
         eyebrow: 'Admin · Schedules & notifications',
@@ -592,6 +576,7 @@ export const PROJECTS: Project[] = [
           },
         ],
         demoScreen: 'schedules',
+        slide: 'schedules',
       },
     ],
     tryThis: [

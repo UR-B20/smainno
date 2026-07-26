@@ -2,17 +2,12 @@ import { useEffect, useState } from 'react'
 import type { ReactNode } from 'react'
 import { cn } from '@/lib/cn'
 import { AppShell, Avatar, Pill, THEMES, ToastHost } from '../shared/kit'
-import { Chart, Doc, Link, List, Send, Shield } from '@/components/icons'
+import { Chart, Doc, Link, List, Shield } from '@/components/icons'
 import { officerById, stats, useIps } from './store'
-import { Coordination, Dashboard, Intake, Register } from './screens'
-import { Deliberation } from './Deliberation'
+import { Dashboard, Intake, Register } from './screens'
+import { CaseRecord } from './CaseRecord'
 
-export type IpsScreen =
-  | 'intake'
-  | 'register'
-  | 'deliberate'
-  | 'coordination'
-  | 'dashboard'
+export type IpsScreen = 'intake' | 'register' | 'dashboard'
 
 const NAV: {
   id: IpsScreen
@@ -24,16 +19,13 @@ const NAV: {
 }[] = [
   { id: 'intake', label: 'File a report', short: 'Report', icon: <Doc size={17} />, hint: 'FormSG' },
   { id: 'register', label: 'Case register', short: 'Register', icon: <List size={17} />, hint: 'SharePoint list' },
-  { id: 'coordination', label: 'Coordination', short: 'Coord', icon: <Send size={17} />, hint: 'Downstream' },
   { id: 'dashboard', label: 'Dashboard', short: 'Board', icon: <Chart size={17} />, hint: 'Oversight' },
 ]
 
 export function IpsApp({ initialScreen }: { initialScreen?: IpsScreen }) {
   const { state, now } = useIps()
   const [screen, setScreen] = useState<IpsScreen>(initialScreen ?? 'register')
-  const [caseId, setCaseId] = useState<string | null>(
-    state.cases.find((c) => c.stage === 'deliberation')?.id ?? null,
-  )
+  const [caseId, setCaseId] = useState<string | null>(null)
 
   useEffect(() => {
     if (initialScreen) setScreen(initialScreen)
@@ -42,10 +34,8 @@ export function IpsApp({ initialScreen }: { initialScreen?: IpsScreen }) {
   const me = officerById(state, state.currentUser)
   const s = stats(state, now)
 
-  const openCase = (id: string) => {
-    setCaseId(id)
-    setScreen('deliberate')
-  }
+  // A case opens as a record over the register — it is not its own screen.
+  const openCase = (id: string) => setCaseId(id)
 
   return (
     <AppShell theme={THEMES.ips}>
@@ -82,9 +72,9 @@ export function IpsApp({ initialScreen }: { initialScreen?: IpsScreen }) {
                   </Pill>
                 </span>
               )}
-              {s.pendingAcks > 0 && (
+              {s.outstanding > 0 && (
                 <span className="hidden @3xl:block">
-                  <Pill tone="warn">{s.pendingAcks} pending acks</Pill>
+                  <Pill tone="warn">{s.outstanding} to execute</Pill>
                 </span>
               )}
               <div className="flex items-center gap-2 @2xl:border-l @2xl:border-bone-300 @2xl:pl-3">
@@ -107,9 +97,7 @@ export function IpsApp({ initialScreen }: { initialScreen?: IpsScreen }) {
               </div>
               <ul className="space-y-0.5 px-2">
                 {NAV.map((item, i) => {
-                  const active =
-                    screen === item.id ||
-                    (screen === 'deliberate' && item.id === 'register')
+                  const active = screen === item.id
                   return (
                     <li key={item.id}>
                       <button
@@ -172,22 +160,22 @@ export function IpsApp({ initialScreen }: { initialScreen?: IpsScreen }) {
             </nav>
 
             <main className="min-h-0 min-w-0 flex-1 overflow-hidden bg-bone-100 p-3 @3xl:p-5">
-              {screen === 'intake' && <Intake onFiled={openCase} />}
+              {screen === 'intake' && (
+                <Intake
+                  onFiled={(id) => {
+                    setScreen('register')
+                    openCase(id)
+                  }}
+                />
+              )}
               {screen === 'register' && <Register onOpen={openCase} />}
-              {screen === 'coordination' && <Coordination />}
               {screen === 'dashboard' && <Dashboard onOpen={openCase} />}
-              {screen === 'deliberate' &&
-                (caseId ? (
-                  <Deliberation caseId={caseId} onBack={() => setScreen('register')} />
-                ) : null)}
             </main>
 
             {/* mobile tab bar */}
             <nav className="flex shrink-0 border-t border-bone-300 bg-white @3xl:hidden">
               {NAV.map((item) => {
-                const active =
-                  screen === item.id ||
-                  (screen === 'deliberate' && item.id === 'register')
+                const active = screen === item.id
                 return (
                   <button
                     key={item.id}
@@ -206,6 +194,8 @@ export function IpsApp({ initialScreen }: { initialScreen?: IpsScreen }) {
             </nav>
           </div>
         </div>
+
+        <CaseRecord caseId={caseId} onClose={() => setCaseId(null)} />
       </ToastHost>
     </AppShell>
   )

@@ -275,7 +275,7 @@ export function RaiseFua({ onDone }: { onDone: () => void }) {
                     />
                     <datalist id="fua-meetings">
                       <option value="15C4I Weekly Coord Conf" />
-                      <option value="SMA Innovation Huddle" />
+                      <option value="Innovation Review" />
                       <option value="Bde Ops Sync" />
                       <option value="Quarterly Safety Conference" />
                     </datalist>

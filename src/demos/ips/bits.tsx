@@ -8,7 +8,6 @@ import type { IpsCase, Stage } from './store'
 
 export const STAGE_TONE: Record<Stage, Tone> = {
   reported: 'warn',
-  deliberation: 'info',
   awarded: 'accent',
   closed: 'ok',
 }

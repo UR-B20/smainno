@@ -8,18 +8,9 @@ import {
   Eyebrow,
   Micro,
   Panel,
-  Rule,
   SectionHeader,
 } from '@/components/console'
-import {
-  ArrowRight,
-  Clock,
-  Compass,
-  Layers,
-  Refresh,
-  Shield,
-  Users,
-} from '@/components/icons'
+import { ArrowRight, Clock, Layers, Refresh, Users } from '@/components/icons'
 import { DECK, PROJECTS } from '@/data/deck'
 import type { Project } from '@/data/deck'
 
@@ -37,7 +28,6 @@ export function Landing() {
       <Hero />
       <ProjectIndex />
       <HowToUse />
-      <Provenance />
     </main>
   )
 }
@@ -60,7 +50,7 @@ function Hero() {
 
       <div className="relative mx-auto max-w-[1240px] px-5 pt-20 pb-16 sm:px-8 sm:pt-28 sm:pb-24">
         <div className="rise">
-          <Eyebrow>{DECK.unit}</Eyebrow>
+          <Eyebrow>{DECK.date}</Eyebrow>
         </div>
 
         <h1 className="rise mt-8 text-[clamp(2.75rem,8vw,6.5rem)] leading-[0.94] font-medium tracking-[-0.035em] text-[#f2f6fb]">
@@ -70,10 +60,9 @@ function Hero() {
 
         <div className="rise mt-9 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
           <p className="max-w-xl text-[16px] leading-relaxed text-[#9db0c8]">
-            Three projects, presented on {DECK.date}. This is the deck rebuilt as
-            something you can use — each project has a working replica seeded with
-            demo data, so you can raise the record, post the update, run the
-            check, and watch the deadline pass.
+            Three projects, each with a working replica seeded with demo data —
+            so you can raise the record, post the update, run the check, and
+            watch the deadline pass, rather than read about it.
           </p>
 
           <div className="flex flex-wrap items-center gap-3">
@@ -90,7 +79,7 @@ function Hero() {
           </div>
         </div>
 
-        {/* agenda card — the deck's first slide, made navigable */}
+        {/* the three projects, as a navigable index */}
         <Panel ticks className="rise mt-16 bg-ink-850/70">
           <div className="flex items-center justify-between gap-4 border-b border-ink-700 px-5 py-3.5 sm:px-7">
             <Micro>Agenda</Micro>
@@ -139,20 +128,6 @@ function Hero() {
             ))}
           </ul>
         </Panel>
-
-        <dl className="rise mt-12 grid grid-cols-2 gap-x-6 gap-y-8 sm:grid-cols-4">
-          {[
-            { v: '3', l: 'Projects' },
-            { v: '3', l: 'Working replicas' },
-            { v: '13', l: 'Screens rebuilt' },
-            { v: '100%', l: 'Runs in your browser' },
-          ].map((s) => (
-            <div key={s.l} className="border-l border-ink-700 pl-4">
-              <dt className="numerals text-3xl font-medium text-[#e7eef7]">{s.v}</dt>
-              <dd className="mt-2 label text-ink-400">{s.l}</dd>
-            </div>
-          ))}
-        </dl>
       </div>
     </section>
   )
@@ -276,7 +251,7 @@ function HowToUse() {
         <SectionHeader
           eyebrow="How to use this"
           title="These are not screenshots."
-          lede="Each replica is a working application with seeded demo data. Nothing leaves your browser, and nothing here is a system of record."
+          lede="Each replica is a working application with seeded demo data. Nothing you do here leaves your browser."
           reveal
         />
 
@@ -297,74 +272,6 @@ function HowToUse() {
               </p>
             </div>
           ))}
-        </div>
-      </div>
-    </section>
-  )
-}
-
-/* ------------------------------------------------------------ provenance */
-
-function Provenance() {
-  return (
-    <section className="mx-auto max-w-[1240px] px-5 py-20 sm:px-8">
-      <div className="grid gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
-        <div data-reveal="">
-          <Eyebrow>Provenance</Eyebrow>
-          <h2 className="mt-5 text-[30px] leading-tight font-medium text-[#eef3fa]">
-            Everything written here comes from the deck.
-          </h2>
-          <Rule className="mt-6" />
-          <p className="mt-6 text-[14px] leading-relaxed text-[#8b9ab1]">
-            Problem statements, screen callouts and the speaker's own notes are
-            reproduced from{' '}
-            <span className="text-[#c0cbdb]">SMA INNOVATION HUDDLE_15C4I</span>,
-            dated {DECK.date}. Where the deck described a behaviour — the 24-hour
-            mandate, the parent roll-up, a window that finalises itself as
-            “Missed” — the replica implements it rather than illustrating it.
-          </p>
-          <p className="mt-4 text-[14px] leading-relaxed text-[#8b9ab1]">
-            Names, units and case details are invented for the demo. Photographs
-            in SmartCheck are simulated captures, since the replica runs entirely
-            client-side.
-          </p>
-        </div>
-
-        <div data-reveal="" style={{ ['--reveal-delay' as string]: '90ms' }}>
-          <Panel className="h-full">
-            <div className="border-b border-ink-700 px-6 py-4">
-              <Micro>Built from the deck</Micro>
-            </div>
-            <ul className="divide-y divide-ink-800">
-              {[
-                {
-                  icon: <Shield size={15} />,
-                  t: 'Behaviour, not mock-ups',
-                  b: 'Roll-ups, mandates and window expiry are computed, so they respond to the clock and to what you do.',
-                },
-                {
-                  icon: <Compass size={15} />,
-                  t: 'Faithful navigation',
-                  b: 'Role-aware menus, the Teams tab, the phone bottom-nav badge — the chrome each product actually lives in.',
-                },
-                {
-                  icon: <Layers size={15} />,
-                  t: 'Append-only records',
-                  b: 'Audit trails, submission histories and issue histories accumulate. Nothing in the replicas overwrites anything.',
-                },
-              ].map((row) => (
-                <li key={row.t} className="flex gap-4 px-6 py-5">
-                  <span className="mt-0.5 shrink-0 text-brass-400">{row.icon}</span>
-                  <div>
-                    <p className="text-[14px] font-medium text-[#dbe4f0]">{row.t}</p>
-                    <p className="mt-1.5 text-[13px] leading-relaxed text-[#8b9ab1]">
-                      {row.b}
-                    </p>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          </Panel>
         </div>
       </div>
     </section>

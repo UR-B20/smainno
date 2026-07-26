@@ -4,19 +4,17 @@ import { DAY, HOUR, MINUTE } from '@/lib/time'
 /* ============================================================================
    DIGITAL IPS — model
 
-   The deck's pipeline is FormSG → SharePoint list → dashboard view. What the
-   replica adds is the part that actually costs people time: the 24-hour
-   recording mandate as a live clock, precedent surfaced on the deliberation
-   screen, and downstream coordination raised automatically instead of by
-   message.
+   The pipeline is FormSG → SharePoint list → dashboard view. What the replica
+   adds is the part that actually costs people time: the 24-hour recording
+   mandate as a live clock running across all three, and an execution status
+   that carries a case through to closure.
    ========================================================================= */
 
-export const STAGES = ['reported', 'deliberation', 'awarded', 'closed'] as const
+export const STAGES = ['reported', 'awarded', 'closed'] as const
 export type Stage = (typeof STAGES)[number]
 
 export const STAGE_LABEL: Record<Stage, string> = {
   reported: 'Reported',
-  deliberation: 'Under deliberation',
   awarded: 'Awarded',
   closed: 'Closed',
 }
@@ -40,65 +38,14 @@ export const AWARDS = [
 ] as const
 export type Award = (typeof AWARDS)[number]
 
-/** Which downstream parties an award has to reach. */
-export const AWARD_DOWNSTREAM: Record<Award, TaskKind[]> = {
-  'Verbal warning': [],
-  'Counselling only': ['counselling'],
-  'Extra duty': ['extra-duty'],
-  'Confinement to camp': ['extra-duty', 'ration-indent'],
-  'Stoppage of leave': ['leave-stoppage'],
-}
-
-export type TaskKind =
-  | 'extra-duty'
-  | 'ration-indent'
-  | 'leave-stoppage'
-  | 'counselling'
-
-export const TASK_META: Record<
-  TaskKind,
-  { party: string; label: string; system: string }
-> = {
-  'extra-duty': {
-    party: 'Extra Duty Planner',
-    label: 'Schedule extra duties',
-    system: 'Duty roster',
-  },
-  'ration-indent': {
-    party: 'Ration Indenter',
-    label: 'Raise ration indent for confinement',
-    system: 'Ration indent',
-  },
-  'leave-stoppage': {
-    party: 'Coy Admin',
-    label: 'Apply leave stoppage in the leave system',
-    system: 'Leave system',
-  },
-  counselling: {
-    party: 'Coy 2IC',
-    label: 'Arrange counselling session',
-    system: 'Coy diary',
-  },
-}
-
 export interface Officer {
   id: string
   rank: string
   name: string
   appt: string
   coy: string
-  /** Deliberating officers may record awards. */
+  /** Only approving appointments may record an award. */
   deliberator: boolean
-}
-
-export interface DownstreamTask {
-  id: string
-  caseId: string
-  kind: TaskKind
-  detail: string
-  raisedAt: number
-  ackAt?: number
-  ackBy?: string
 }
 
 export interface Deliberation {
@@ -131,7 +78,6 @@ export interface IpsCase {
 export interface IpsState {
   officers: Officer[]
   cases: IpsCase[]
-  tasks: DownstreamTask[]
   currentUser: string
   nextRef: number
 }
@@ -363,7 +309,7 @@ const SEED: SeedCase[] = [
     narrative:
       'Absent from the 0730 fall-in without notification. Reported 25 minutes late.',
     witnesses: '3SG Marcus Teo',
-    stage: 'deliberation',
+    stage: 'reported',
   },
   {
     ref: 'IPS-2026-039',
@@ -384,7 +330,6 @@ const SEED: SeedCase[] = [
 
 function seed(t0: number): IpsState {
   const cases: IpsCase[] = []
-  const tasks: DownstreamTask[] = []
 
   for (const s of SEED) {
     const incidentAt = t0 + s.incidentOffsetH * HOUR
@@ -406,42 +351,18 @@ function seed(t0: number): IpsState {
         rationale: s.rationale ?? '',
       }
       log.push({
-        at: decidedAt - 30 * MINUTE,
-        by: s.decidedBy,
-        note: 'Case opened for deliberation.',
-      })
-      log.push({
         at: decidedAt,
         by: s.decidedBy,
         note: `Award recorded: ${s.award}${s.quantum ? ` ×${s.quantum}` : ''}.`,
       })
 
-      for (const kind of AWARD_DOWNSTREAM[s.award]) {
-        const raisedAt = decidedAt + 2 * MINUTE
-        tasks.push({
-          id: makeId('t'),
-          caseId: id,
-          kind,
-          detail: detailFor(kind, s.award, s.quantum ?? 0, `${s.subjectRank} ${s.subjectName}`),
-          raisedAt,
-          ackAt: s.stage === 'closed' ? raisedAt + 3 * HOUR : undefined,
-          ackBy: s.stage === 'closed' ? 'o1' : undefined,
-        })
-      }
-
       if (s.stage === 'closed') {
         log.push({
           at: decidedAt + 4 * HOUR,
           by: s.decidedBy,
-          note: 'All downstream parties acknowledged. Case closed.',
+          note: 'Award executed. Case closed.',
         })
       }
-    } else if (s.stage === 'deliberation') {
-      log.push({
-        at: reportedAt + 40 * MINUTE,
-        by: 'o3',
-        note: 'Case opened for deliberation.',
-      })
     }
 
     cases.push({
@@ -466,27 +387,8 @@ function seed(t0: number): IpsState {
   return {
     officers: OFFICERS,
     cases: cases.sort((a, b) => b.reportedAt - a.reportedAt),
-    tasks,
     currentUser: 'o1',
     nextRef: 40,
-  }
-}
-
-export function detailFor(
-  kind: TaskKind,
-  award: Award,
-  quantum: number,
-  subject: string,
-): string {
-  switch (kind) {
-    case 'extra-duty':
-      return `${quantum || 1} extra dut${(quantum || 1) === 1 ? 'y' : 'ies'} for ${subject}, to be slotted into the roster within 14 days.`
-    case 'ration-indent':
-      return `Ration indent for ${quantum} day${quantum === 1 ? '' : 's'} of confinement for ${subject}.`
-    case 'leave-stoppage':
-      return `Stop ${quantum || 1} weekend${(quantum || 1) === 1 ? '' : 's'} of leave for ${subject} in the leave system.`
-    case 'counselling':
-      return `Arrange a counselling session for ${subject} following a ${award.toLowerCase()}.`
   }
 }
 
@@ -530,52 +432,14 @@ export function mandateBreached(c: IpsCase, now: number): boolean {
   return c.deliberation ? c.deliberation.decidedAt > deadline : now > deadline
 }
 
-export function tasksFor(state: IpsState, caseId: string): DownstreamTask[] {
-  return state.tasks.filter((t) => t.caseId === caseId)
-}
-
-/** Prior awards for the same offence — precedent, on the same screen. */
-export function precedents(
-  state: IpsState,
-  c: IpsCase,
-): { case: IpsCase; deliberation: Deliberation }[] {
-  return state.cases
-    .filter(
-      (x) => x.id !== c.id && x.offence === c.offence && x.deliberation !== undefined,
-    )
-    .map((x) => ({ case: x, deliberation: x.deliberation! }))
-    .sort((a, b) => b.deliberation.decidedAt - a.deliberation.decidedAt)
-}
-
-export function precedentSummary(
-  rows: { deliberation: Deliberation }[],
-): { award: Award; count: number; median: number } | null {
-  if (!rows.length) return null
-  const tally = new Map<Award, number[]>()
-  for (const r of rows) {
-    const list = tally.get(r.deliberation.award) ?? []
-    list.push(r.deliberation.quantum)
-    tally.set(r.deliberation.award, list)
-  }
-  let best: { award: Award; count: number; median: number } | null = null
-  for (const [award, quanta] of tally) {
-    const sorted = [...quanta].sort((a, b) => a - b)
-    const median = sorted[Math.floor(sorted.length / 2)]
-    if (!best || quanta.length > best.count) {
-      best = { award, count: quanta.length, median }
-    }
-  }
-  return best
-}
-
 export interface IpsStats {
   open: number
-  awaitingDeliberation: number
+  awaitingRecord: number
   breached: number
   withinMandate: number
   recorded: number
   compliancePct: number
-  pendingAcks: number
+  outstanding: number
 }
 
 export function stats(state: IpsState, now: number): IpsStats {
@@ -583,15 +447,13 @@ export function stats(state: IpsState, now: number): IpsStats {
   const withinMandate = recorded.filter((c) => !mandateBreached(c, now)).length
   return {
     open: state.cases.filter((c) => c.stage !== 'closed').length,
-    awaitingDeliberation: state.cases.filter(
-      (c) => c.stage === 'reported' || c.stage === 'deliberation',
-    ).length,
+    awaitingRecord: state.cases.filter((c) => c.stage === 'reported').length,
     breached: state.cases.filter((c) => mandateBreached(c, now)).length,
     withinMandate,
     recorded: recorded.length,
     compliancePct:
       recorded.length > 0 ? Math.round((withinMandate / recorded.length) * 100) : 100,
-    pendingAcks: state.tasks.filter((t) => !t.ackAt).length,
+    outstanding: state.cases.filter((c) => c.stage === 'awarded').length,
   }
 }
 
@@ -618,22 +480,13 @@ export function recordAward(
     rationale: args.rationale,
   }
 
-  const subject = `${target.subjectRank} ${target.subjectName}`
-  const newTasks: DownstreamTask[] = AWARD_DOWNSTREAM[args.award].map((kind) => ({
-    id: makeId('t'),
-    caseId: target.id,
-    kind,
-    detail: detailFor(kind, args.award, args.quantum, subject),
-    raisedAt: args.at + MINUTE,
-  }))
-
   return {
     ...state,
     cases: state.cases.map((c) =>
       c.id === target.id
         ? {
             ...c,
-            stage: 'awarded',
+            stage: 'awarded' as Stage,
             deliberation,
             log: [
               ...c.log,
@@ -642,61 +495,15 @@ export function recordAward(
                 by: state.currentUser,
                 note: `Award recorded: ${args.award}${args.quantum ? ` ×${args.quantum}` : ''}.`,
               },
-              ...(newTasks.length
-                ? [
-                    {
-                      at: args.at + MINUTE,
-                      by: 'system',
-                      note: `${newTasks.length} downstream task${newTasks.length === 1 ? '' : 's'} raised automatically.`,
-                    },
-                  ]
-                : []),
             ],
           }
         : c,
     ),
-    tasks: [...state.tasks, ...newTasks],
   }
 }
 
-export function acknowledgeTask(
-  state: IpsState,
-  taskId: string,
-  at: number,
-): IpsState {
-  const task = state.tasks.find((t) => t.id === taskId)
-  if (!task) return state
-
-  const tasks = state.tasks.map((t) =>
-    t.id === taskId ? { ...t, ackAt: at, ackBy: state.currentUser } : t,
-  )
-
-  const remaining = tasks.filter((t) => t.caseId === task.caseId && !t.ackAt)
-  const cases = state.cases.map((c) => {
-    if (c.id !== task.caseId) return c
-    const log = [
-      ...c.log,
-      {
-        at,
-        by: state.currentUser,
-        note: `${TASK_META[task.kind].party} acknowledged: ${TASK_META[task.kind].label}.`,
-      },
-    ]
-    if (remaining.length === 0 && c.stage === 'awarded') {
-      log.push({
-        at: at + MINUTE,
-        by: 'system',
-        note: 'All downstream parties acknowledged. Case closed.',
-      })
-      return { ...c, stage: 'closed' as Stage, log }
-    }
-    return { ...c, log }
-  })
-
-  return { ...state, tasks, cases }
-}
-
-export function openForDeliberation(
+/** The register's execution status: an award is not finished until it is done. */
+export function markExecuted(
   state: IpsState,
   caseId: string,
   at: number,
@@ -704,13 +511,17 @@ export function openForDeliberation(
   return {
     ...state,
     cases: state.cases.map((c) =>
-      c.id === caseId && c.stage === 'reported'
+      c.id === caseId && c.stage === 'awarded'
         ? {
             ...c,
-            stage: 'deliberation',
+            stage: 'closed' as Stage,
             log: [
               ...c.log,
-              { at, by: state.currentUser, note: 'Case opened for deliberation.' },
+              {
+                at,
+                by: state.currentUser,
+                note: 'Award executed. Case closed.',
+              },
             ],
           }
         : c,

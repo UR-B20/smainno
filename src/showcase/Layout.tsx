@@ -16,9 +16,9 @@ function Mark() {
         <span className="absolute -right-px -bottom-px h-1.5 w-1.5 border-r border-b border-brass-400" />
       </span>
       <span className="leading-tight">
-        <span className="block label text-[#dbe4f0]">15C4I</span>
+        <span className="block label text-[#dbe4f0]">Innovation</span>
         <span className="mt-1 block text-[9px] tracking-[0.16em] text-ink-400 uppercase">
-          Innovation Huddle
+          Projects
         </span>
       </span>
     </Link>
@@ -71,6 +71,20 @@ export function Layout() {
                   {p.name}
                 </NavLink>
               ))}
+              <span className="mx-2 h-3 w-px bg-ink-700" aria-hidden="true" />
+              <NavLink
+                to="/poc"
+                className={({ isActive }) =>
+                  cn(
+                    'rounded-xs border px-3 py-2 label transition-colors',
+                    isActive
+                      ? 'border-brass-500/60 bg-brass-900/40 text-brass-300'
+                      : 'border-ink-600 text-ink-400 hover:border-brass-500/50 hover:text-brass-200',
+                  )
+                }
+              >
+                POC
+              </NavLink>
             </nav>
             <span className="ml-auto md:ml-0">
               <Micro className="hidden lg:block">{DECK.date}</Micro>
@@ -87,9 +101,8 @@ export function Layout() {
             <div>
               <Mark />
               <p className="mt-5 max-w-sm text-[13px] leading-relaxed text-[#8b9ab1]">
-                Interactive replicas of the three projects presented at the SMA
-                Innovation Huddle. Every screen here runs on demo data held in
-                your browser.
+                Interactive replicas of the three projects. Every screen here
+                runs on seeded data held in your own browser.
               </p>
             </div>
             <nav className="flex flex-col gap-2.5">
@@ -105,7 +118,14 @@ export function Layout() {
               ))}
             </nav>
             <nav className="flex flex-col gap-2.5">
-              <Micro className="mb-1">Full-screen replicas</Micro>
+              <Micro className="mb-1">Contact</Micro>
+              <Link
+                to="/poc"
+                className="text-[13px] text-[#93a3b9] transition-colors hover:text-brass-200"
+              >
+                Point of contact
+              </Link>
+              <Micro className="mt-4 mb-1">Full-screen replicas</Micro>
               {PROJECTS.map((p) => (
                 <Link
                   key={p.id}
@@ -119,10 +139,7 @@ export function Layout() {
           </div>
 
           <div className="mt-10 flex flex-wrap items-center justify-between gap-4 border-t border-ink-800 pt-6">
-            <Micro>
-              {DECK.unit} · {DECK.date}
-            </Micro>
-            <Micro>Demo data · not a system of record</Micro>
+            <Micro>{DECK.date}</Micro>
           </div>
         </div>
         <ClassificationBar />

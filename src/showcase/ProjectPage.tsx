@@ -21,7 +21,8 @@ import {
   External,
   Play,
 } from '@/components/icons'
-import { PROJECTS, PROJECT_BY_ID } from '@/data/deck'
+import { POC, PROJECTS, PROJECT_BY_ID } from '@/data/deck'
+import { SlideRef } from './SlideRef'
 import type { Project, ProjectId, ScreenSpec } from '@/data/deck'
 import { FuaTrackerDemo } from '@/demos/fua'
 import type { FuaScreen } from '@/demos/fua/FuaApp'
@@ -190,7 +191,7 @@ export function ProjectPage() {
         <SectionHeader
           eyebrow="The screens"
           title="Every screen, and why it looks like that."
-          lede="The callouts and the speaker's notes are reproduced from the deck. Each one opens the corresponding screen in the live replica above."
+          lede="What each screen is for, and why it is laid out that way. Each one opens the corresponding screen in the live replica above."
           accent={project.accent}
           reveal
         />
@@ -218,6 +219,36 @@ export function ProjectPage() {
           </Panel>
         </section>
       )}
+
+      {/* onboarding ask, where interest actually forms */}
+      <section className="mx-auto max-w-[1240px] px-5 pb-20 sm:px-8">
+        <Link
+          to="/poc"
+          data-reveal=""
+          className={cn(
+            'group flex flex-col gap-5 border p-8 transition-colors sm:flex-row sm:items-center sm:gap-8 sm:p-10',
+            a.border,
+            a.bg,
+          )}
+        >
+          <div className="min-w-0 flex-1">
+            <Micro className={a.text}>Interested?</Micro>
+            <p className="mt-4 text-[22px] leading-snug font-medium text-[#f2f6fb]">
+              To know more about {project.name}, or to onboard your unit
+            </p>
+            <p className="mt-2.5 text-[14px] text-[#8b9ab1]">
+              Contact {POC.appointment}, {POC.formation}.
+            </p>
+          </div>
+          <span className="inline-flex shrink-0 items-center gap-2 rounded-xs bg-brass-500 px-4 py-2.5 label-lg text-ink-950 transition-colors group-hover:bg-brass-400">
+            Point of contact
+            <ArrowRight
+              size={14}
+              className="transition-transform duration-200 group-hover:translate-x-0.5"
+            />
+          </span>
+        </Link>
+      </section>
 
       <ProjectPager current={project} />
     </main>
@@ -481,6 +512,14 @@ function ScreenBlock({
               />
             </button>
           )}
+
+          {spec.slide && (
+            <SlideRef
+              projectId={project.id}
+              screenKey={spec.slide}
+              className="mt-7"
+            />
+          )}
         </div>
 
         <div>
@@ -505,15 +544,6 @@ function ScreenBlock({
               </li>
             ))}
           </ul>
-
-          {spec.narration && (
-            <blockquote className="mt-7 border-l-2 border-ink-600 pl-5">
-              <Micro className="block">From the speaker's notes</Micro>
-              <p className="mt-3 text-[13.5px] leading-relaxed text-[#93a3b9] italic">
-                “{spec.narration}”
-              </p>
-            </blockquote>
-          )}
         </div>
       </div>
     </article>
