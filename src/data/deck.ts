@@ -80,7 +80,7 @@ export const PROJECTS: Project[] = [
     tagline:
       'Digital workflow for informal punishment reporting, deliberation, and record-keeping.',
     premise:
-      'Informal punishment runs on chat threads and goodwill. Digital IPS puts the whole cycle — report, deliberate, record, coordinate — on one rail with the 24-hour mandate built into the clock rather than into someone’s memory.',
+      'Informal punishment runs on chat threads and goodwill. Digital IPS puts the cycle — report, record, oversee — on one rail, with the 24-hour mandate built into the clock rather than into someone’s memory.',
     status: 'FormSG + SharePoint pipeline',
     statusShort: 'FormSG + SharePoint',
     statusTone: 'live',
@@ -88,8 +88,8 @@ export const PROJECTS: Project[] = [
     capabilities: [
       'Structured intake',
       '24-hour mandate clock',
-      'Deliberation with precedent',
-      'Automatic downstream tasking',
+      'One searchable register',
+      'Unit-level oversight',
     ],
     problem: {
       eyebrow: 'Current pain points',
@@ -122,22 +122,21 @@ export const PROJECTS: Project[] = [
       proofs: [
         'A structured report instead of a chat message',
         'A mandate clock that counts down in the open',
-        'Precedent on the deliberation screen, not in someone’s head',
-        'Downstream tasking raised the moment an award is made',
+        'One register you can search, filter and account for',
+        'Awards and execution status on the same record',
       ],
     },
     flow: {
       eyebrow: 'How it works',
       headline: 'From incident to closed record.',
       subhead:
-        'The deck’s pipeline — FormSG in, SharePoint list as the register, dashboard on top — with the deliberation and coordination steps that sit between them.',
+        'FormSG in, a SharePoint list as the register, a dashboard on top — with the 24-hour mandate running across all three.',
       steps: [
         { index: '01', title: 'Report', body: 'FormSG intake, structured' },
         { index: '02', title: 'Register', body: 'Lands in the SharePoint list' },
-        { index: '03', title: 'Deliberate', body: 'Decide against precedent' },
-        { index: '04', title: 'Record', body: 'Award recorded within 24h' },
-        { index: '05', title: 'Coordinate', body: 'Downstream tasks raised' },
-        { index: '06', title: 'Dashboard', body: 'Unit-level oversight' },
+        { index: '03', title: 'Record', body: 'Award recorded within 24h' },
+        { index: '04', title: 'Execute', body: 'Status tracked to closure' },
+        { index: '05', title: 'Dashboard', body: 'Unit-level oversight' },
       ],
       kicker:
         'The mandate clock runs from the moment of the incident, not from the moment somebody opens the file.',
@@ -190,53 +189,7 @@ export const PROJECTS: Project[] = [
         slide: 'register',
       },
       {
-        eyebrow: 'Screen 03 · Deliberation',
-        title: 'Decide with precedent on the same screen',
-        callouts: [
-          {
-            key: 'A',
-            title: 'Case context locked left',
-            body: 'The report, the particulars and the countdown stay in view while you decide.',
-          },
-          {
-            key: 'B',
-            title: 'Prior records, matched',
-            body: 'Previous awards for the same offence category surface automatically, with what was awarded and by whom.',
-          },
-          {
-            key: 'C',
-            title: 'Award and rationale',
-            body: 'Both are recorded together — the decision and the reason behind it.',
-          },
-        ],
-        demoScreen: 'deliberate',
-        slide: 'deliberate',
-      },
-      {
-        eyebrow: 'Screen 04 · Coordination',
-        title: 'Downstream tasking raises itself',
-        callouts: [
-          {
-            key: 'A',
-            title: 'Extra duty planner',
-            body: 'Extra duties are pushed to the planner with dates already computed from the award.',
-          },
-          {
-            key: 'B',
-            title: 'Ration indent',
-            body: 'Confinement awards raise a ration indent automatically instead of a manual message.',
-          },
-          {
-            key: 'C',
-            title: 'Acknowledged, not assumed',
-            body: 'Each downstream party acknowledges in the record, so coordination is provable.',
-          },
-        ],
-        demoScreen: 'coordination',
-        slide: 'coordination',
-      },
-      {
-        eyebrow: 'Screen 05 · Oversight',
+        eyebrow: 'Screen 03 · Oversight',
         title: 'Dashboard — the unit-level view',
         callouts: [
           {
@@ -261,8 +214,8 @@ export const PROJECTS: Project[] = [
     ],
     tryThis: [
       'File a fresh report on the intake form and watch it appear in the register with a live mandate countdown.',
-      'Open a case under deliberation — prior awards for that offence category are pulled in beside it.',
-      'Award a punishment and see the extra duty and ration indent tasks raise themselves.',
+      'Open a case from the register and record the award against it — inside the 24-hour window.',
+      'Mark an award executed and watch the case close out.',
       'Use the clock control to jump forward and watch a case breach the 24-hour mandate.',
     ],
   },

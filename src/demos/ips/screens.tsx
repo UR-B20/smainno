@@ -18,7 +18,6 @@ import {
 import { makeId } from '@/lib/store'
 import {
   Check,
-  Clock,
   Doc,
   Filter,
   Grid,
@@ -39,8 +38,6 @@ import {
   OFFENCES,
   STAGES,
   STAGE_LABEL,
-  TASK_META,
-  acknowledgeTask,
   isRecorded,
   mandateBreached,
   officerName,
@@ -169,7 +166,7 @@ export function Intake({ onFiled }: { onFiled: (caseId: string) => void }) {
 
             <FormSection index="2" title="Incident">
               <div className="space-y-3">
-                <Field label="Offence category" required hint="Drives the precedent shown at deliberation.">
+                <Field label="Offence category" required hint="Groups like with like in the register and on the dashboard.">
                   <Select
                     value={offence}
                     onChange={(e) => setOffence(e.target.value as Offence)}
@@ -465,132 +462,6 @@ export function Register({ onOpen }: { onOpen: (caseId: string) => void }) {
   )
 }
 
-/* ========================================================== COORDINATION */
-
-export function Coordination() {
-  const { state, set, now } = useIps()
-  const toast = useToast()
-  const [tab, setTab] = useState<'pending' | 'done'>('pending')
-
-  const rows = state.tasks
-    .filter((t) => (tab === 'pending' ? !t.ackAt : Boolean(t.ackAt)))
-    .sort((a, b) => b.raisedAt - a.raisedAt)
-
-  const byParty = useMemo(() => {
-    const map = new Map<string, typeof rows>()
-    for (const t of rows) {
-      const party = TASK_META[t.kind].party
-      map.set(party, [...(map.get(party) ?? []), t])
-    }
-    return [...map.entries()]
-  }, [rows])
-
-  const ack = (id: string) => {
-    set((prev) => acknowledgeTask(prev, id, now))
-    toast('Acknowledged', {
-      tone: 'ok',
-      detail: 'Recorded in the case log — coordination is provable.',
-    })
-  }
-
-  return (
-    <div className="flex h-full flex-col gap-4 overflow-y-auto @3xl:overflow-hidden">
-      <div className="flex flex-col gap-3 @2xl:flex-row @2xl:items-end @2xl:justify-between @2xl:gap-4">
-        <div>
-          <h1 className="text-[19px] font-semibold text-slate-ink">
-            Downstream coordination
-          </h1>
-          <p className="mt-0.5 text-[12px] text-slate-500">
-            Raised automatically when an award is recorded. No manual messaging,
-            and each party acknowledges in the record.
-          </p>
-        </div>
-        <div className="flex gap-1">
-          {(['pending', 'done'] as const).map((t) => (
-            <button
-              key={t}
-              type="button"
-              onClick={() => setTab(t)}
-              className={cn(
-                'rounded-sm border px-3 py-1.5 text-[11.5px] font-medium transition-colors',
-                tab === t
-                  ? 'border-[var(--accent)] bg-[var(--accent-soft)] text-[var(--accent-deep)]'
-                  : 'border-bone-300 bg-white text-slate-500',
-              )}
-            >
-              {t === 'pending' ? 'Awaiting acknowledgement' : 'Acknowledged'}
-              <span className="numerals ml-1.5 text-slate-400">
-                {state.tasks.filter((x) => (t === 'pending' ? !x.ackAt : x.ackAt)).length}
-              </span>
-            </button>
-          ))}
-        </div>
-      </div>
-
-      <div className="space-y-3 @3xl:min-h-0 @3xl:flex-1 @3xl:overflow-y-auto">
-        {byParty.length === 0 && (
-          <Empty
-            icon={<Check size={26} />}
-            title={tab === 'pending' ? 'Nothing outstanding' : 'Nothing acknowledged yet'}
-            body={
-              tab === 'pending'
-                ? 'Every downstream party has acknowledged their tasking.'
-                : 'Acknowledged tasks will be listed here with their timestamps.'
-            }
-          />
-        )}
-        {byParty.map(([party, items]) => (
-          <Card key={party}>
-            <CardHead
-              title={party}
-              sub={TASK_META[items[0].kind].system}
-              right={<Pill tone={tab === 'pending' ? 'warn' : 'ok'}>{items.length}</Pill>}
-            />
-            <ul className="divide-y divide-bone-200">
-              {items.map((t) => {
-                const c = state.cases.find((x) => x.id === t.caseId)!
-                return (
-                  <li key={t.id} className="flex flex-col items-start gap-3 px-4 py-3 @xl:flex-row @xl:gap-4">
-                    <div className="min-w-0 flex-1">
-                      <div className="flex items-center gap-2">
-                        <span className="font-mono text-[10.5px] font-medium text-[var(--accent-deep)]">
-                          {c.ref}
-                        </span>
-                        <span className="text-[11px] text-slate-400">
-                          {c.subjectRank} {c.subjectName} · {c.coy}
-                        </span>
-                      </div>
-                      <p className="mt-1 text-[12.5px] leading-snug text-slate-ink">
-                        {t.detail}
-                      </p>
-                      <p className="mt-1 flex items-center gap-1.5 text-[10.5px] text-slate-400">
-                        <Clock size={10} /> Raised {stamp(t.raisedAt)}
-                        {t.ackAt && (
-                          <>
-                            <span className="text-slate-300">·</span>
-                            <Check size={10} className="text-[#2f9169]" />
-                            Acknowledged {stamp(t.ackAt)} by{' '}
-                            {officerName(state, t.ackBy ?? '')}
-                          </>
-                        )}
-                      </p>
-                    </div>
-                    {!t.ackAt && (
-                      <AppBtn size="sm" variant="primary" onClick={() => ack(t.id)}>
-                        Acknowledge
-                      </AppBtn>
-                    )}
-                  </li>
-                )
-              })}
-            </ul>
-          </Card>
-        ))}
-      </div>
-    </div>
-  )
-}
-
 /* ============================================================= DASHBOARD */
 
 function offenceTally(state: IpsState) {
@@ -627,10 +498,10 @@ export function Dashboard({ onOpen }: { onOpen: (caseId: string) => void }) {
       <div className="grid grid-cols-2 gap-2.5 @2xl:grid-cols-3 @4xl:grid-cols-5 @4xl:gap-3">
         <KPI value={s.open} label="Open cases" tone="accent" hint="Not yet closed" />
         <KPI
-          value={s.awaitingDeliberation}
-          label="Awaiting decision"
+          value={s.awaitingRecord}
+          label="Awaiting award"
           tone="warn"
-          hint="Reported or under deliberation"
+          hint="Reported, nothing recorded yet"
         />
         <KPI
           value={s.breached}
@@ -645,10 +516,10 @@ export function Dashboard({ onOpen }: { onOpen: (caseId: string) => void }) {
           hint={`${s.withinMandate} of ${s.recorded} awards`}
         />
         <KPI
-          value={s.pendingAcks}
-          label="Pending acks"
-          tone={s.pendingAcks ? 'warn' : 'ok'}
-          hint="Downstream tasks outstanding"
+          value={s.outstanding}
+          label="Execution due"
+          tone={s.outstanding ? 'warn' : 'ok'}
+          hint="Awarded but not yet carried out"
         />
       </div>
 
