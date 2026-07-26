@@ -79,8 +79,8 @@ export function Deliberation({
   }
 
   return (
-    <div className="flex h-full flex-col gap-4 overflow-hidden">
-      <div className="flex items-center gap-3">
+    <div className="flex h-full flex-col gap-4 overflow-y-auto @3xl:overflow-hidden">
+      <div className="flex flex-wrap items-center gap-3">
         <AppBtn variant="ghost" size="sm" onClick={onBack}>
           <ArrowLeft size={13} /> Register
         </AppBtn>
@@ -100,9 +100,9 @@ export function Deliberation({
         )}
       </div>
 
-      <div className="grid min-h-0 flex-1 grid-cols-[300px_minmax(0,1fr)_320px] gap-4">
+      <div className="grid gap-4 @3xl:min-h-0 @3xl:flex-1 @3xl:grid-cols-2 @5xl:grid-cols-[300px_minmax(0,1fr)_320px]">
         {/* --------------------------------------------- A · locked context */}
-        <Card className="flex min-h-0 flex-col">
+        <Card className="flex flex-col @3xl:min-h-0">
           <CardHead
             title="Case particulars"
             right={
@@ -111,7 +111,7 @@ export function Deliberation({
               </span>
             }
           />
-          <div className="min-h-0 flex-1 overflow-y-auto">
+          <div className="@3xl:min-h-0 @3xl:flex-1 @3xl:overflow-y-auto">
             <div className="border-b border-bone-200 p-3.5">
               <MandateClock c={c} now={now} variant="block" />
             </div>
@@ -163,7 +163,7 @@ export function Deliberation({
         </Card>
 
         {/* ------------------------------------------------- B · precedent */}
-        <Card className="flex min-h-0 flex-col">
+        <Card className="flex flex-col @3xl:min-h-0">
           <CardHead
             title="Prior records"
             sub={`Previous awards for “${c.offence}”`}
@@ -176,7 +176,7 @@ export function Deliberation({
               )
             }
           />
-          <div className="min-h-0 flex-1 overflow-y-auto">
+          <div className="max-h-[360px] overflow-y-auto @3xl:max-h-none @3xl:min-h-0 @3xl:flex-1">
             {priors.length === 0 ? (
               <Empty
                 icon={<Layers size={24} />}
@@ -224,12 +224,12 @@ export function Deliberation({
         </Card>
 
         {/* ----------------------------------------------------- C · award */}
-        <Card className="flex min-h-0 flex-col">
+        <Card className="flex flex-col @3xl:col-span-2 @3xl:min-h-0 @5xl:col-span-1">
           <CardHead
             title={decided ? 'Award recorded' : 'Record the award'}
             sub={decided ? undefined : 'The decision and the reason, together'}
           />
-          <div className="min-h-0 flex-1 space-y-3.5 overflow-y-auto p-4">
+          <div className="space-y-3.5 p-4 @3xl:min-h-0 @3xl:flex-1 @3xl:overflow-y-auto">
             {decided ? (
               <>
                 <div className="rounded-md border border-[#2f9169]/25 bg-[#e6f4ec] p-3">

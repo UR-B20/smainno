@@ -52,8 +52,9 @@ export function Overview({ onOpen }: { onOpen: (id: string) => void }) {
   const attention = needsAttention(state, now)
   const ledger = recentLog(state, 24)
 
+  // Narrow: the screen itself scrolls. Wide: the panes scroll independently.
   return (
-    <div className="flex h-full flex-col gap-4 overflow-hidden">
+    <div className="flex h-full flex-col gap-4 overflow-y-auto @3xl:overflow-hidden">
       <div>
         <h1 className="text-[19px] font-semibold text-slate-ink">Overview</h1>
         <p className="mt-0.5 text-[12px] text-slate-500">
@@ -63,16 +64,16 @@ export function Overview({ onOpen }: { onOpen: (id: string) => void }) {
       </div>
 
       {/* A — at-a-glance KPIs */}
-      <div className="flex gap-3">
+      <div className="grid grid-cols-2 gap-2.5 @2xl:grid-cols-4 @3xl:flex @3xl:gap-3">
         <KPI value={k.open} label="Open FUAs" tone="accent" hint="Not yet rolled up to Completed" />
         <KPI value={k.dueSoon} label="Due in 7 days" tone="warn" hint="Subtasks approaching their date" />
         <KPI value={k.overdue} label="Overdue" tone="danger" hint="Past due and not complete" />
         <KPI value={k.completed} label="Completed" tone="ok" hint="Every subtask closed" />
       </div>
 
-      <div className="grid min-h-0 flex-1 grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)] gap-4">
+      <div className="grid gap-4 @3xl:min-h-0 @3xl:flex-1 @3xl:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)]">
         {/* B — needs attention */}
-        <Card className="flex min-h-0 flex-col">
+        <Card className="flex flex-col @3xl:min-h-0">
           <CardHead
             title="Needs attention"
             sub="Overdue and blocked subtasks, triaged into one list"
@@ -82,7 +83,7 @@ export function Overview({ onOpen }: { onOpen: (id: string) => void }) {
               </Pill>
             }
           />
-          <div className="min-h-0 flex-1 overflow-y-auto">
+          <div className="max-h-[420px] overflow-y-auto @3xl:max-h-none @3xl:min-h-0 @3xl:flex-1">
             {attention.length === 0 ? (
               <Empty
                 icon={<Check size={26} />}
@@ -134,13 +135,13 @@ export function Overview({ onOpen }: { onOpen: (id: string) => void }) {
         </Card>
 
         {/* C — live activity ledger */}
-        <Card className="flex min-h-0 flex-col">
+        <Card className="flex flex-col @3xl:min-h-0">
           <CardHead
             title="Activity"
             sub="Straight from the immutable update log"
             right={<span className="label text-slate-400">Newest first</span>}
           />
-          <div className="min-h-0 flex-1 overflow-y-auto px-4">
+          <div className="max-h-[420px] overflow-y-auto px-4 @3xl:max-h-none @3xl:min-h-0 @3xl:flex-1">
             <ul className="divide-y divide-bone-200">
               {ledger.map((e) => (
                 <LedgerRow key={e.id} state={state} entry={e} now={now} dense />
@@ -180,8 +181,8 @@ export function MySubtasks({ onOpen }: { onOpen: (id: string) => void }) {
   const me = personById(state, state.currentUser)
 
   return (
-    <div className="flex h-full flex-col gap-4 overflow-hidden">
-      <div className="flex items-end justify-between gap-4">
+    <div className="flex h-full flex-col gap-4 overflow-y-auto @3xl:overflow-hidden">
+      <div className="flex flex-col gap-2 @2xl:flex-row @2xl:items-end @2xl:justify-between @2xl:gap-4">
         <div>
           <h1 className="text-[19px] font-semibold text-slate-ink">My subtasks</h1>
           <p className="mt-0.5 text-[12px] text-slate-500">
@@ -210,7 +211,7 @@ export function MySubtasks({ onOpen }: { onOpen: (id: string) => void }) {
         }))}
       />
 
-      <div className="min-h-0 flex-1 overflow-y-auto">
+      <div className="@3xl:min-h-0 @3xl:flex-1 @3xl:overflow-y-auto">
         {rows.length === 0 ? (
           <Empty
             icon={<Clipboard size={26} />}
@@ -238,7 +239,7 @@ export function MySubtasks({ onOpen }: { onOpen: (id: string) => void }) {
                       done && 'opacity-70',
                     )}
                   >
-                    <div className="flex items-start justify-between gap-4">
+                    <div className="flex flex-col gap-2.5 @xl:flex-row @xl:items-start @xl:justify-between @xl:gap-4">
                       <div className="min-w-0">
                         <div className="flex flex-wrap items-center gap-2">
                           <span className="font-mono text-[10.5px] font-medium text-[var(--accent-deep)]">
@@ -259,7 +260,7 @@ export function MySubtasks({ onOpen }: { onOpen: (id: string) => void }) {
                           {fua.ref} · {fua.title}
                         </p>
                       </div>
-                      <div className="flex shrink-0 flex-col items-end gap-2">
+                      <div className="flex shrink-0 items-center justify-between gap-3 @xl:flex-col @xl:items-end @xl:gap-2">
                         <DueCell dueAt={s.dueAt} now={now} done={done} />
                         <span className="inline-flex items-center gap-1 text-[11px] font-medium text-[var(--accent-deep)]">
                           Post update <ChevronRight size={12} />
@@ -304,7 +305,7 @@ export function Register({ onOpen }: { onOpen: (id: string) => void }) {
     .sort((a, b) => a.dueAt - b.dueAt)
 
   return (
-    <div className="flex h-full flex-col gap-4 overflow-hidden">
+    <div className="flex h-full flex-col gap-4 overflow-y-auto @3xl:overflow-hidden">
       <div>
         <h1 className="text-[19px] font-semibold text-slate-ink">FUA register</h1>
         <p className="mt-0.5 text-[12px] text-slate-500">
@@ -313,8 +314,8 @@ export function Register({ onOpen }: { onOpen: (id: string) => void }) {
         </p>
       </div>
 
-      <div className="flex items-center gap-2">
-        <div className="relative w-72">
+      <div className="flex flex-wrap items-center gap-2">
+        <div className="relative w-full @2xl:w-72">
           <Search
             size={14}
             className="absolute top-1/2 left-2.5 -translate-y-1/2 text-slate-400"
@@ -329,7 +330,7 @@ export function Register({ onOpen }: { onOpen: (id: string) => void }) {
         <Select
           value={filter}
           onChange={(e) => setFilter(e.target.value as Status | 'All')}
-          className="w-44"
+          className="w-44 shrink-0"
         >
           <option value="All">All statuses</option>
           {STATUSES.map((s) => (
@@ -338,12 +339,12 @@ export function Register({ onOpen }: { onOpen: (id: string) => void }) {
             </option>
           ))}
         </Select>
-        <span className="ml-auto text-[11px] text-slate-400">
+        <span className="ml-auto hidden text-[11px] text-slate-400 @xl:inline">
           {rows.length} of {state.fuas.length} FUAs
         </span>
       </div>
 
-      <div className="min-h-0 flex-1 space-y-2 overflow-y-auto">
+      <div className="space-y-2 @3xl:min-h-0 @3xl:flex-1 @3xl:overflow-y-auto">
         {rows.map((f) => {
           const subs = subtasksOf(state, f.id)
           const status = fuaStatus(state, f.id)
@@ -357,9 +358,9 @@ export function Register({ onOpen }: { onOpen: (id: string) => void }) {
                 type="button"
                 onClick={() => toggle(f.id)}
                 aria-expanded={open}
-                className="flex w-full items-start gap-3 px-4 py-3 text-left transition-colors hover:bg-bone-50"
+                className="flex w-full flex-col gap-3 px-4 py-3 text-left transition-colors hover:bg-bone-50 @2xl:flex-row @2xl:items-start"
               >
-                <span className="mt-0.5 text-slate-400">
+                <span className="hidden text-slate-400 @2xl:mt-0.5 @2xl:block">
                   {open ? <ChevronDown size={15} /> : <ChevronRight size={15} />}
                 </span>
                 <div className="min-w-0 flex-1">
@@ -384,7 +385,7 @@ export function Register({ onOpen }: { onOpen: (id: string) => void }) {
                     {displayName(personById(state, f.raisedBy))}
                   </p>
                 </div>
-                <div className="w-44 shrink-0">
+                <div className="shrink-0 @2xl:w-44">
                   <div className="mb-1.5 flex items-center justify-between text-[10.5px] text-slate-500">
                     <span>
                       {subs.filter((s) => s.status === 'Completed').length}/
@@ -413,7 +414,9 @@ export function Register({ onOpen }: { onOpen: (id: string) => void }) {
                       {f.detail}
                     </p>
                   )}
-                  <table className="w-full text-[12px]">
+                  {/* Wide: a table. Narrow: the same rows as cards, because a
+                      six-column table on a phone is a horizontal-scroll trap. */}
+                  <table className="hidden w-full text-[12px] @3xl:table">
                     <thead>
                       <tr className="text-left text-slate-400">
                         <th className="px-4 py-2 label font-medium">Ref</th>
@@ -457,6 +460,36 @@ export function Register({ onOpen }: { onOpen: (id: string) => void }) {
                       ))}
                     </tbody>
                   </table>
+
+                  <ul className="divide-y divide-bone-200 @3xl:hidden">
+                    {subs.map((s) => (
+                      <li key={s.id}>
+                        <button
+                          type="button"
+                          onClick={() => onOpen(s.id)}
+                          className="w-full px-4 py-3 text-left"
+                        >
+                          <div className="flex items-center gap-2">
+                            <span className="font-mono text-[10.5px] text-slate-500">
+                              {s.ref}
+                            </span>
+                            <StatusPill status={s.status} />
+                          </div>
+                          <p className="mt-1.5 text-[12.5px] leading-snug text-slate-ink">
+                            {s.title}
+                          </p>
+                          <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1">
+                            <Person state={state} id={s.assignee} size={16} />
+                            <DueCell
+                              dueAt={s.dueAt}
+                              now={now}
+                              done={s.status === 'Completed'}
+                            />
+                          </div>
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
               )}
             </Card>
@@ -485,8 +518,8 @@ export function Activity() {
   )
 
   return (
-    <div className="flex h-full flex-col gap-4 overflow-hidden">
-      <div className="flex items-end justify-between gap-4">
+    <div className="flex h-full flex-col gap-4 overflow-y-auto @3xl:overflow-hidden">
+      <div className="flex flex-col gap-2 @2xl:flex-row @2xl:items-end @2xl:justify-between @2xl:gap-4">
         <div>
           <h1 className="text-[19px] font-semibold text-slate-ink">Audit trail</h1>
           <p className="mt-0.5 text-[12px] text-slate-500">
@@ -506,7 +539,7 @@ export function Activity() {
         </Select>
       </div>
 
-      <Card className="flex min-h-0 flex-1 flex-col">
+      <Card className="flex flex-col @3xl:min-h-0 @3xl:flex-1">
         <CardHead
           title={`${entries.length} entries`}
           sub="Append-only · newest first"
@@ -516,7 +549,7 @@ export function Activity() {
             </span>
           }
         />
-        <div className="min-h-0 flex-1 overflow-y-auto px-4">
+        <div className="max-h-[520px] overflow-y-auto px-4 @3xl:max-h-none @3xl:min-h-0 @3xl:flex-1">
           <ul className="divide-y divide-bone-200">
             {entries.map((e) => (
               <LedgerRow key={e.id} state={state} entry={e} now={now} />

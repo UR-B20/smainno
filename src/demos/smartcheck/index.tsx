@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { cn } from '@/lib/cn'
 import { Micro } from '@/components/console'
+import { useIsHandheld } from '@/hooks/useMedia'
 import { AppShell, THEMES, ToastHost } from '../shared/kit'
 import { DemoFull, DemoStage } from '../shared/DemoStage'
 import { ScProvider, teamById, useSc } from './store'
@@ -82,6 +83,7 @@ function ModeSwitch({
 
 function Inner({ framed, screen }: { framed: boolean; screen?: ScScreen }) {
   const { now, offsetMin, jump, resetClock, reset } = useSc()
+  const handheld = useIsHandheld()
   const [mode, setMode] = useState<'checker' | 'admin'>(
     screen && ADMIN_SCREENS.includes(screen) ? 'admin' : 'checker',
   )
@@ -119,7 +121,9 @@ function Inner({ framed, screen }: { framed: boolean; screen?: ScScreen }) {
         onReset={reset}
         controls={<ModeSwitch mode={mode} setMode={setMode} />}
       >
-        {mode === 'checker' ? (
+        {mode === 'checker' && !handheld ? (
+          // On a desktop the checker still deserves a phone-shaped viewport;
+          // on an actual phone the screen already is one.
           <div className="flex h-full items-center justify-center bg-ink-900 py-4">
             <div className="surface-bone h-full max-h-[820px] w-[390px] overflow-hidden rounded-[28px] border border-ink-600 shadow-device">
               {body}

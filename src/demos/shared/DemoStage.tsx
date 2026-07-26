@@ -3,13 +3,17 @@ import type { ReactNode } from 'react'
 import { cn } from '@/lib/cn'
 import { DeviceFrame } from '@/components/DeviceFrame'
 import { Micro } from '@/components/console'
-import { Clock, External, Refresh } from '@/components/icons'
+import { ChevronDown, Clock, External, Refresh, Settings } from '@/components/icons'
 import { hhmm, shortDate } from '@/lib/time'
+import { useIsHandheld } from '@/hooks/useMedia'
 
 /**
  * The strip of meta-controls that sits *outside* every replica: the simulated
  * clock, a reset, and whatever role switch the app needs. Keeping it out of the
  * frame is deliberate — inside the frame, the app has to look like the app.
+ *
+ * On a phone the strip collapses to one line, because every pixel it takes is a
+ * pixel the replica doesn't get.
  */
 
 export interface StageClock {
@@ -42,12 +46,50 @@ function CtlBtn({
       title={title}
       onClick={onClick}
       className={cn(
-        'inline-flex h-6 items-center gap-1 rounded-xs border border-ink-600 px-2 label text-ink-400 transition-colors hover:border-brass-500/60 hover:text-brass-200',
+        'inline-flex h-7 items-center gap-1 rounded-xs border border-ink-600 px-2.5 label text-ink-400 transition-colors hover:border-brass-500/60 hover:text-brass-200',
         className,
       )}
     >
       {children}
     </button>
+  )
+}
+
+function ClockReadout({ clock }: { clock: StageClock }) {
+  return (
+    <div className="flex items-center gap-1.5 rounded-xs border border-ink-600 bg-ink-800 px-2 py-1">
+      <Clock size={11} className="text-brass-400" />
+      <span className="label text-[#c9d5e5]">
+        {shortDate(clock.now)} · {hhmm(clock.now)}
+      </span>
+      {clock.offsetMin !== 0 && (
+        <span className="label text-brass-400">
+          {clock.offsetMin > 0 ? '+' : ''}
+          {Math.round(clock.offsetMin / 60)}h
+        </span>
+      )}
+    </div>
+  )
+}
+
+function ClockButtons({ clock }: { clock: StageClock }) {
+  return (
+    <div className="flex items-center gap-1">
+      {JUMPS.map((j) => (
+        <CtlBtn
+          key={j.label}
+          title={`Advance the simulated clock by ${j.label.slice(1)}`}
+          onClick={() => clock.jump(j.minutes)}
+        >
+          {j.label}
+        </CtlBtn>
+      ))}
+      {clock.offsetMin !== 0 && (
+        <CtlBtn title="Return to real time" onClick={clock.resetClock}>
+          Now
+        </CtlBtn>
+      )}
+    </div>
   )
 }
 
@@ -64,6 +106,46 @@ export function DemoToolbar({
   controls?: ReactNode
   className?: string
 }) {
+  const handheld = useIsHandheld()
+  const [open, setOpen] = useState(false)
+
+  if (handheld) {
+    return (
+      <div className={cn('border-b border-ink-700 bg-ink-850', className)}>
+        <div className="flex items-center gap-2 px-3 py-2">
+          <span className="ping-ring h-1.5 w-1.5 shrink-0 rounded-full bg-jade-400 text-jade-400" />
+          <Micro className="shrink-0 text-jade-300">Live</Micro>
+          <ClockReadout clock={clock} />
+          <button
+            type="button"
+            onClick={() => setOpen((v) => !v)}
+            aria-expanded={open}
+            className="ml-auto inline-flex h-7 shrink-0 items-center gap-1.5 rounded-xs border border-ink-600 px-2.5 label text-ink-400"
+          >
+            <Settings size={12} />
+            <ChevronDown
+              size={11}
+              className={cn('transition-transform', open && 'rotate-180')}
+            />
+          </button>
+        </div>
+
+        {open && (
+          <div className="flex flex-col gap-3 border-t border-ink-800 px-3 py-3">
+            <div className="flex items-center justify-between gap-2">
+              <ClockButtons clock={clock} />
+              <CtlBtn title="Wipe demo data and re-seed" onClick={onReset}>
+                <Refresh size={11} />
+                Reset
+              </CtlBtn>
+            </div>
+            {controls}
+          </div>
+        )}
+      </div>
+    )
+  }
+
   return (
     <div
       className={cn(
@@ -81,36 +163,8 @@ export function DemoToolbar({
       {controls}
 
       <div className="ml-auto flex items-center gap-2">
-        <div className="flex items-center gap-1.5 rounded-xs border border-ink-600 bg-ink-800 px-2 py-1">
-          <Clock size={11} className="text-brass-400" />
-          <span className="label text-[#c9d5e5]">
-            {shortDate(clock.now)} · {hhmm(clock.now)}
-          </span>
-          {clock.offsetMin !== 0 && (
-            <span className="label text-brass-400">
-              {clock.offsetMin > 0 ? '+' : ''}
-              {Math.round(clock.offsetMin / 60)}h
-            </span>
-          )}
-        </div>
-
-        <div className="flex items-center gap-1">
-          {JUMPS.map((j) => (
-            <CtlBtn
-              key={j.label}
-              title={`Advance the simulated clock by ${j.label.slice(1)}`}
-              onClick={() => clock.jump(j.minutes)}
-            >
-              {j.label}
-            </CtlBtn>
-          ))}
-          {clock.offsetMin !== 0 && (
-            <CtlBtn title="Return to real time" onClick={clock.resetClock}>
-              Now
-            </CtlBtn>
-          )}
-        </div>
-
+        <ClockReadout clock={clock} />
+        <ClockButtons clock={clock} />
         <CtlBtn title="Wipe demo data and re-seed" onClick={onReset}>
           <Refresh size={11} />
           Reset

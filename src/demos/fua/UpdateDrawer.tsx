@@ -104,7 +104,7 @@ export function UpdateDrawer({
         </>
       }
     >
-      <div className="grid gap-5 md:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)]">
+      <div className="grid gap-5 @3xl:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)]">
         {/* ------------------------------------------------ A · locked context */}
         <section className="rounded-md border border-bone-300 bg-bone-50">
           <header className="flex items-center justify-between border-b border-bone-200 px-3 py-2">

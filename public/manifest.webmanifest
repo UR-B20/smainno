@@ -1,0 +1,15 @@
+{
+  "name": "Innovation Projects · Capability Showcase",
+  "short_name": "Capability",
+  "description": "Interactive replicas of Digital IPS, FUA Tracker and SmartCheck.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#070C16",
+  "theme_color": "#070C16",
+  "icons": [
+    { "src": "./favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "./apple-touch-icon.png", "sizes": "180x180", "type": "image/png" }
+  ]
+}

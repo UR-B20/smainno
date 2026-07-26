@@ -193,10 +193,10 @@ export function RaiseFua({ onDone }: { onDone: () => void }) {
   }
 
   return (
-    <div className="grid h-full grid-cols-[minmax(0,1fr)_300px] gap-5 overflow-hidden">
+    <div className="flex h-full flex-col gap-5 overflow-y-auto @3xl:grid @3xl:grid-cols-[minmax(0,1fr)_300px] @3xl:overflow-hidden">
       {/* ------------------------------------------------------- the work order */}
-      <div className="min-h-0 overflow-y-auto pr-1">
-        <div className="mb-4 flex items-center gap-3">
+      <div className="@3xl:min-h-0 @3xl:overflow-y-auto @3xl:pr-1">
+        <div className="mb-4 flex flex-wrap items-center gap-3">
           {([1, 2] as const).map((n) => (
             <button
               key={n}
@@ -225,7 +225,7 @@ export function RaiseFua({ onDone }: { onDone: () => void }) {
               {n === 1 ? 'FUA particulars' : 'Assign subtasks'}
             </button>
           ))}
-          <span className="ml-auto text-[11px] text-slate-400">
+          <span className="ml-auto hidden text-[11px] text-slate-400 @2xl:inline">
             Step two reuses the same screen.
           </span>
         </div>
@@ -265,7 +265,7 @@ export function RaiseFua({ onDone }: { onDone: () => void }) {
                 title="Meeting context"
                 sub="Where the action came from — so it can be traced back."
               >
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid gap-3 @xl:grid-cols-2">
                   <Field label="Meeting / conference" required>
                     <Input
                       value={meeting}
@@ -295,7 +295,7 @@ export function RaiseFua({ onDone }: { onDone: () => void }) {
                 title="Priority & timeline"
                 sub="The due date drives the amber and red flags everyone else sees."
               >
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid gap-3 @xl:grid-cols-2">
                   <Field label="Priority" required>
                     <Select
                       value={priority}
@@ -328,7 +328,7 @@ export function RaiseFua({ onDone }: { onDone: () => void }) {
                 {subs.map((s, i) => (
                   <div
                     key={s.key}
-                    className="grid grid-cols-[minmax(0,1fr)_150px_130px_100px_28px] items-end gap-2 rounded-sm border border-bone-200 bg-bone-50 p-2.5"
+                    className="grid grid-cols-1 items-end gap-2 rounded-sm border border-bone-200 bg-bone-50 p-2.5 @2xl:grid-cols-2 @4xl:grid-cols-[minmax(0,1fr)_150px_130px_100px_28px]"
                   >
                     <Field label={`Subtask ${i + 1}`} required>
                       <Input
@@ -392,8 +392,8 @@ export function RaiseFua({ onDone }: { onDone: () => void }) {
       </div>
 
       {/* ------------------------------------------- before you commit checklist */}
-      <aside className="min-h-0 overflow-y-auto">
-        <div className="sticky top-0 space-y-3">
+      <aside className="@3xl:min-h-0 @3xl:overflow-y-auto">
+        <div className="space-y-3 @3xl:sticky @3xl:top-0">
           <div className="rounded-md border border-bone-300 bg-white p-4">
             <div className="mb-3 flex items-center justify-between">
               <span className="label text-slate-500">Before you commit</span>

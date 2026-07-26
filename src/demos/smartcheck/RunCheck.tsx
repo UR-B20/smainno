@@ -121,7 +121,7 @@ export function RunCheck({
   }
 
   return (
-    <div className="flex h-full flex-col bg-bone-100">
+    <div className="mx-auto flex h-full w-full max-w-[560px] flex-col bg-bone-100">
       {/* header */}
       <header className="shrink-0 bg-[var(--accent)] px-4 pt-3 pb-3 text-white">
         <div className="flex items-center gap-2">

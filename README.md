@@ -31,6 +31,35 @@ The app is a static, client-only bundle. It uses a hash router and a relative
 base path, so `dist/` can be served from any static host or opened from a
 subdirectory without server rewrites.
 
+## Publishing it
+
+`.github/workflows/deploy.yml` builds and deploys to GitHub Pages on every push
+to `main`. It needs one setting turned on once:
+
+> **Settings → Pages → Build and deployment → Source: GitHub Actions**
+
+After that the site is live at **https://ur-b20.github.io/smainno/** — a plain
+public link, fine to paste into Telegram or WhatsApp. The page carries Open
+Graph tags and a `og.png` card, so the link unfurls with a proper preview
+instead of a bare URL, and a web manifest so it can be added to a home screen.
+
+## On a phone
+
+The replicas are built to be *used* on a handset, not squinted at:
+
+- Project pages link out to a full-screen replica instead of embedding a
+  shrunken desktop frame.
+- FUA Tracker and Digital IPS swap their sidebars for a bottom tab bar — the
+  same move the real Teams and intranet clients make. SmartCheck's checker was
+  already a phone app.
+- Dense tables become card lists; multi-column screens stack; dialogs become
+  full-height sheets.
+- Layout is driven by **container queries**, so each app reads its own width.
+  The same components are correct at 390px full-bleed and at 1280px inside a
+  device frame on the desktop site.
+- The demo controls (clock, roles, reset) collapse behind one button so they
+  cost a single line instead of three.
+
 ## How to use the replicas
 
 Every replica sits behind a thin console strip that is **not** part of the

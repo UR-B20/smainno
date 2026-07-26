@@ -61,10 +61,13 @@ export function AppShell({
   } as CSSProperties
 
   return (
+    // `@container` is what makes the replicas work on a phone: every layout
+    // inside queries the app's own width, so the same components lay out
+    // correctly at 390px full-bleed and at 1280px inside a device frame.
     <div
       style={style}
       className={cn(
-        'flex h-full w-full flex-col overflow-hidden bg-bone-100 font-sans text-[13px] text-slate-ink antialiased',
+        '@container flex h-full w-full flex-col overflow-hidden bg-bone-100 font-sans text-[13px] text-slate-ink antialiased',
         className,
       )}
       {...rest}
@@ -473,7 +476,10 @@ export function Tabs<T extends string>({
   return (
     <div
       role="tablist"
-      className={cn('flex items-center gap-1 border-b border-bone-300', className)}
+      className={cn(
+        'flex items-center gap-1 overflow-x-auto border-b border-bone-300',
+        className,
+      )}
     >
       {items.map((item) => {
         const active = item.value === value
@@ -484,7 +490,7 @@ export function Tabs<T extends string>({
             aria-selected={active}
             onClick={() => onChange(item.value)}
             className={cn(
-              'relative -mb-px flex items-center gap-1.5 border-b-2 px-3 py-2 text-[12px] font-medium transition-colors',
+              'relative -mb-px flex shrink-0 items-center gap-1.5 border-b-2 px-3 py-2 text-[12px] font-medium transition-colors',
               active
                 ? 'border-[var(--accent)] text-[var(--accent-deep)]'
                 : 'border-transparent text-slate-500 hover:text-slate-ink',
@@ -569,7 +575,8 @@ export function Modal({
   if (!open) return null
 
   return (
-    <div className="absolute inset-0 z-50 flex items-center justify-center p-6">
+    // Full-height sheet on a narrow container, centred dialog once there's room.
+    <div className="absolute inset-0 z-50 flex items-end justify-center @3xl:items-center @3xl:p-6">
       <div
         className="absolute inset-0 bg-slate-ink/45 backdrop-blur-[1px]"
         onClick={onClose}
@@ -578,8 +585,8 @@ export function Modal({
       <div
         role="dialog"
         aria-modal="true"
-        style={{ width, maxWidth: '100%' }}
-        className="relative flex max-h-full flex-col overflow-hidden rounded-lg border border-bone-300 bg-white shadow-[0_30px_70px_-20px_rgba(11,18,32,0.45)]"
+        style={{ ['--modal-w' as string]: `${width}px` }}
+        className="relative flex h-full max-h-full w-full flex-col overflow-hidden border-bone-300 bg-white shadow-[0_30px_70px_-20px_rgba(11,18,32,0.45)] @3xl:h-auto @3xl:w-[var(--modal-w)] @3xl:max-w-full @3xl:rounded-lg @3xl:border"
       >
         <header className="flex items-start justify-between gap-4 border-b border-bone-200 px-5 py-4">
           <div className="min-w-0">
