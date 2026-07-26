@@ -1,0 +1,372 @@
+@import 'tailwindcss';
+
+/* ============================================================================
+   INNOVATION PROJECTS — CAPABILITY SHOWCASE
+   Design language: "Operations Console"
+
+   A defence-brief aesthetic. Deep ink field, engineered hairlines, brass as the
+   single warm accent, monospaced microtype for every label / reference / stamp.
+   The showcase chrome is dark; the product replicas render on bone-white
+   surfaces inside device frames, the way the real apps would look in Teams or
+   on a phone.
+   ========================================================================= */
+
+@theme {
+  --font-sans:
+    'Inter Variable', ui-sans-serif, system-ui, -apple-system, 'Segoe UI',
+    sans-serif;
+  --font-mono:
+    'JetBrains Mono Variable', ui-monospace, 'SF Mono', Menlo, Consolas,
+    monospace;
+
+  /* --- Ink: the showcase field ------------------------------------------ */
+  --color-ink-950: #04070d;
+  --color-ink-900: #070c16;
+  --color-ink-850: #0b1220;
+  --color-ink-800: #0f1829;
+  --color-ink-750: #142136;
+  --color-ink-700: #1a2a43;
+  --color-ink-600: #223553;
+  --color-ink-500: #2f4568;
+  --color-ink-400: #47608a;
+
+  /* --- Brass: the only warm accent -------------------------------------- */
+  --color-brass-200: #f3e3ac;
+  --color-brass-300: #ead283;
+  --color-brass-400: #dcbb52;
+  --color-brass-500: #c9a227;
+  --color-brass-600: #a8851a;
+  --color-brass-700: #7d6212;
+  --color-brass-900: #2b2209;
+
+  /* --- Signal states ----------------------------------------------------- */
+  --color-signal-300: #f3938a;
+  --color-signal-400: #e6675c;
+  --color-signal-500: #d4453a;
+  --color-signal-600: #b1332a;
+  --color-signal-900: #2e100d;
+
+  --color-amber-350: #f0bd6a;
+  --color-amber-450: #e29b32;
+  --color-amber-550: #bf7d1c;
+  --color-amber-950: #2c1e08;
+
+  --color-jade-300: #7fd4ac;
+  --color-jade-400: #46b083;
+  --color-jade-500: #2f9169;
+  --color-jade-900: #0c2a1f;
+
+  --color-azure-300: #8ec4f0;
+  --color-azure-400: #4f9fe0;
+  --color-azure-500: #2f7fc4;
+  --color-azure-900: #0c2337;
+
+  /* --- Bone: the product surfaces --------------------------------------- */
+  --color-bone-50: #fcfbf8;
+  --color-bone-100: #f5f3ed;
+  --color-bone-200: #ece8df;
+  --color-bone-300: #ddd8cb;
+  --color-bone-400: #c3bcab;
+
+  --color-slate-ink: #121927;
+  --color-slate-700: #2f3c54;
+  --color-slate-600: #4a5872;
+  --color-slate-500: #6b7893;
+  --color-slate-400: #94a0b6;
+
+  --radius-xs: 2px;
+  --radius-sm: 3px;
+  --radius-md: 5px;
+  --radius-lg: 8px;
+
+  --shadow-lift: 0 1px 0 0 rgb(255 255 255 / 0.04), 0 18px 40px -24px rgb(0 0 0 / 0.9);
+  --shadow-device: 0 40px 90px -30px rgb(0 0 0 / 0.75), 0 4px 14px -4px rgb(0 0 0 / 0.6);
+
+  --ease-console: cubic-bezier(0.22, 0.68, 0.28, 1);
+}
+
+/* ============================================================================
+   BASE
+   ========================================================================= */
+
+@layer base {
+  * {
+    border-color: color-mix(in oklab, var(--color-ink-600) 100%, transparent);
+  }
+
+  html {
+    color-scheme: dark;
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+
+  body {
+    margin: 0;
+    background-color: var(--color-ink-900);
+    color: #c3cede;
+    font-family: var(--font-sans);
+    font-synthesis-weight: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-variant-numeric: tabular-nums;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    color: #eef3fa;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  ::selection {
+    background: color-mix(in oklab, var(--color-brass-500) 42%, transparent);
+    color: #fff;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-brass-400);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+
+  /* Console-grade scrollbars, so scrollable demo panes don't break the frame. */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-ink-600) transparent;
+  }
+  *::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  *::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  *::-webkit-scrollbar-thumb {
+    background: var(--color-ink-600);
+    border-radius: 99px;
+  }
+  *::-webkit-scrollbar-thumb:hover {
+    background: var(--color-ink-500);
+  }
+
+  /* Inside a bone-surfaced replica the scrollbar has to invert. */
+  .surface-bone * {
+    scrollbar-color: var(--color-bone-400) transparent;
+  }
+  .surface-bone *::-webkit-scrollbar-thumb {
+    background: var(--color-bone-400);
+  }
+
+  input,
+  textarea,
+  select,
+  button {
+    font: inherit;
+    color: inherit;
+  }
+
+  input::placeholder,
+  textarea::placeholder {
+    color: color-mix(in oklab, currentColor 40%, transparent);
+  }
+
+  /* Native date/time pickers are unreadable on bone; nudge the indicator. */
+  input[type='date']::-webkit-calendar-picker-indicator,
+  input[type='time']::-webkit-calendar-picker-indicator {
+    opacity: 0.45;
+    cursor: pointer;
+  }
+  input[type='date']::-webkit-calendar-picker-indicator:hover,
+  input[type='time']::-webkit-calendar-picker-indicator:hover {
+    opacity: 0.85;
+  }
+}
+
+/* ============================================================================
+   UTILITIES — the recurring motifs of the language
+   ========================================================================= */
+
+/* Microtype. Every label, stamp, reference and axis tick uses this. */
+@utility label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  line-height: 1.1;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+@utility label-lg {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  line-height: 1.2;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+/* Engineered grid field — the ambient texture of the dark shell. */
+@utility grid-field {
+  background-image:
+    linear-gradient(to right, rgb(71 96 138 / 0.09) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(71 96 138 / 0.09) 1px, transparent 1px),
+    linear-gradient(to right, rgb(71 96 138 / 0.16) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(71 96 138 / 0.16) 1px, transparent 1px);
+  background-size:
+    28px 28px,
+    28px 28px,
+    140px 140px,
+    140px 140px;
+}
+
+/* Crosshair brackets at the four corners of a panel. */
+@utility tick-corners {
+  position: relative;
+
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    width: 9px;
+    height: 9px;
+    pointer-events: none;
+    border-color: var(--color-brass-500);
+  }
+  &::before {
+    top: -1px;
+    left: -1px;
+    border-top: 1px solid;
+    border-left: 1px solid;
+  }
+  &::after {
+    bottom: -1px;
+    right: -1px;
+    border-bottom: 1px solid;
+    border-right: 1px solid;
+  }
+}
+
+/* A hairline rule that fades out — used under section headers. */
+@utility rule-fade {
+  background-image: linear-gradient(
+    to right,
+    var(--color-brass-500) 0,
+    color-mix(in oklab, var(--color-ink-500) 90%, transparent) 12%,
+    transparent 100%
+  );
+  height: 1px;
+}
+
+/* Diagonal hazard hatching for missed / blocked zones. */
+@utility hatch {
+  background-image: repeating-linear-gradient(
+    -45deg,
+    currentColor 0 1px,
+    transparent 1px 7px
+  );
+}
+
+@utility numerals {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum' 1;
+}
+
+/* ============================================================================
+   MOTION
+   ========================================================================= */
+
+@keyframes console-rise {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes console-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes sweep {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(220%);
+  }
+}
+
+@keyframes pulse-ring {
+  0% {
+    box-shadow: 0 0 0 0 color-mix(in oklab, currentColor 45%, transparent);
+  }
+  70% {
+    box-shadow: 0 0 0 7px transparent;
+  }
+  100% {
+    box-shadow: 0 0 0 0 transparent;
+  }
+}
+
+@utility rise {
+  animation: console-rise 0.5s var(--ease-console) both;
+}
+
+@utility fade-in {
+  animation: console-fade 0.35s var(--ease-console) both;
+}
+
+@utility ping-ring {
+  animation: pulse-ring 2s var(--ease-console) infinite;
+}
+
+/* Reveal-on-scroll, driven by IntersectionObserver in useReveal(). */
+@layer components {
+  [data-reveal] {
+    opacity: 0;
+    transform: translateY(18px);
+    transition:
+      opacity 0.7s var(--ease-console),
+      transform 0.7s var(--ease-console);
+    transition-delay: var(--reveal-delay, 0ms);
+  }
+  [data-reveal='in'] {
+    opacity: 1;
+    transform: none;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    [data-reveal] {
+      opacity: 1;
+      transform: none;
+    }
+  }
+}
