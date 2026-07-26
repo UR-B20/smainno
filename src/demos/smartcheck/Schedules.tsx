@@ -87,8 +87,8 @@ export function Schedules() {
   const todayOccs = occurrencesOn(state, now).filter((o) => o.scheduleId === schedule.id)
 
   return (
-    <div className="grid h-full grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)] gap-4 overflow-hidden">
-      <div className="flex min-h-0 flex-col gap-4">
+    <div className="flex h-full flex-col gap-4 overflow-y-auto @3xl:grid @3xl:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)] @3xl:overflow-hidden">
+      <div className="flex flex-col gap-4 @3xl:min-h-0">
         <div>
           <h1 className="text-[19px] font-semibold text-slate-ink">
             Schedules & notifications
@@ -100,10 +100,10 @@ export function Schedules() {
           </p>
         </div>
 
-        <Card className="flex min-h-0 flex-1 flex-col">
+        <Card className="flex flex-col @3xl:min-h-0 @3xl:flex-1">
           <CardHead title="All schedules" sub={`${state.schedules.length} configured`} />
-          <div className="min-h-0 flex-1 overflow-y-auto">
-            <table className="w-full text-[12px]">
+          <div className="max-h-[320px] overflow-x-auto overflow-y-auto @3xl:max-h-none @3xl:min-h-0 @3xl:flex-1">
+            <table className="w-full min-w-[560px] text-[12px]">
               <thead className="sticky top-0 bg-white">
                 <tr className="border-b border-bone-200 text-left text-slate-400">
                   <th className="px-4 py-2 label font-medium">Check</th>
@@ -194,7 +194,7 @@ export function Schedules() {
       </div>
 
       {/* ------------------------------------------------------------ editor */}
-      <Card className="flex min-h-0 flex-col">
+      <Card className="flex flex-col @3xl:min-h-0">
         <CardHead
           title={templateById(state, schedule.templateId)?.name ?? 'Schedule'}
           sub={`Issued to ${teamById(state, schedule.teamId)?.name}`}
@@ -215,7 +215,7 @@ export function Schedules() {
           }
         />
 
-        <div className="min-h-0 flex-1 space-y-4 overflow-y-auto p-4">
+        <div className="space-y-4 p-4 @3xl:min-h-0 @3xl:flex-1 @3xl:overflow-y-auto">
           <section>
             <span className="label mb-2 block text-slate-500">Pattern</span>
             <div className="grid grid-cols-3 gap-1.5">
@@ -378,7 +378,7 @@ export function Schedules() {
 
           <section className="rounded-md border border-bone-300 bg-bone-50 p-3">
             <span className="label text-slate-500">Deadline nudges</span>
-            <div className="mt-2.5 grid grid-cols-2 gap-3">
+            <div className="mt-2.5 grid gap-3 @xl:grid-cols-2">
               <Field label={`Email at T−${schedule.emailLeadMin}`}>
                 <Input
                   value={schedule.mailingList}

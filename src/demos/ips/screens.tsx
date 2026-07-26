@@ -139,10 +139,10 @@ export function Intake({ onFiled }: { onFiled: (caseId: string) => void }) {
           </div>
         </div>
 
-        <div className="grid grid-cols-[minmax(0,1fr)_260px] gap-4 rounded-b-md border border-t-0 border-bone-300 bg-white p-5">
+        <div className="grid gap-4 rounded-b-md border border-t-0 border-bone-300 bg-white p-4 @3xl:grid-cols-[minmax(0,1fr)_260px] @3xl:p-5">
           <div className="space-y-5">
             <FormSection index="1" title="Subject particulars">
-              <div className="grid grid-cols-[110px_minmax(0,1fr)_160px] gap-3">
+              <div className="grid grid-cols-2 gap-3 @2xl:grid-cols-[110px_minmax(0,1fr)_160px]">
                 <Field label="Rank" required>
                   <Select value={subjectRank} onChange={(e) => setSubjectRank(e.target.value)}>
                     {['REC', 'PTE', 'LCP', 'CPL', 'CFC'].map((r) => (
@@ -179,7 +179,7 @@ export function Intake({ onFiled }: { onFiled: (caseId: string) => void }) {
                     ))}
                   </Select>
                 </Field>
-                <div className="grid grid-cols-3 gap-3">
+                <div className="grid grid-cols-2 gap-3 @2xl:grid-cols-3">
                   <Field label="Date of incident" required>
                     <Input type="date" value={date} onChange={(e) => setDate(e.target.value)} />
                   </Field>
@@ -305,7 +305,7 @@ export function Register({ onOpen }: { onOpen: (caseId: string) => void }) {
   return (
     <div className="flex h-full flex-col overflow-hidden">
       {/* SharePoint-ish list chrome */}
-      <div className="shrink-0 rounded-t-md border border-b-0 border-bone-300 bg-white px-4 pt-3">
+      <div className="shrink-0 rounded-t-md border border-b-0 border-bone-300 bg-white px-3 pt-3 @2xl:px-4">
         <div className="flex items-baseline gap-2">
           <h1 className="text-[16px] font-semibold text-slate-ink">
             IPS Case Register
@@ -314,7 +314,7 @@ export function Register({ onOpen }: { onOpen: (caseId: string) => void }) {
             SharePoint list · {state.cases.length} items
           </span>
         </div>
-        <div className="mt-2.5 flex items-center gap-2 border-b border-bone-200 pb-2">
+        <div className="mt-2.5 hidden items-center gap-2 border-b border-bone-200 pb-2 @2xl:flex">
           <span className="flex items-center gap-1.5 rounded-sm px-2 py-1 text-[11.5px] text-slate-500">
             <Plus size={13} /> New
           </span>
@@ -328,8 +328,8 @@ export function Register({ onOpen }: { onOpen: (caseId: string) => void }) {
             <List size={13} /> All cases
           </span>
         </div>
-        <div className="flex items-center gap-2 py-2.5">
-          <div className="relative w-64">
+        <div className="flex flex-wrap items-center gap-2 py-2.5">
+          <div className="relative w-full @2xl:w-64">
             <Search size={13} className="absolute top-1/2 left-2.5 -translate-y-1/2 text-slate-400" />
             <Input
               value={query}
@@ -341,7 +341,7 @@ export function Register({ onOpen }: { onOpen: (caseId: string) => void }) {
           <Select
             value={stage}
             onChange={(e) => setStage(e.target.value as Stage | 'All')}
-            className="w-44"
+            className="w-44 shrink-0"
           >
             <option value="All">All stages</option>
             {STAGES.map((s) => (
@@ -350,13 +350,13 @@ export function Register({ onOpen }: { onOpen: (caseId: string) => void }) {
               </option>
             ))}
           </Select>
-          <Select value={coy} onChange={(e) => setCoy(e.target.value)} className="w-36">
+          <Select value={coy} onChange={(e) => setCoy(e.target.value)} className="w-36 shrink-0">
             <option value="All">All companies</option>
             {['Alpha Coy', 'Bravo Coy', 'Support Coy'].map((c) => (
               <option key={c}>{c}</option>
             ))}
           </Select>
-          <span className="ml-auto text-[11px] text-slate-400">
+          <span className="ml-auto hidden text-[11px] text-slate-400 @xl:inline">
             {rows.length} shown
           </span>
         </div>
@@ -366,7 +366,8 @@ export function Register({ onOpen }: { onOpen: (caseId: string) => void }) {
         {rows.length === 0 ? (
           <Empty icon={<Search size={26} />} title="No cases match" body="Adjust the filters above." />
         ) : (
-          <table className="w-full text-[12px]">
+          <>
+          <table className="hidden w-full text-[12px] @3xl:table">
             <thead className="sticky top-0 z-10 bg-bone-50">
               <tr className="border-b border-bone-300 text-left text-slate-500">
                 <th className="px-4 py-2 label font-medium">Reference</th>
@@ -420,6 +421,44 @@ export function Register({ onOpen }: { onOpen: (caseId: string) => void }) {
               })}
             </tbody>
           </table>
+
+          {/* Narrow: the same register as cards. A seven-column table on a
+              phone is a horizontal-scroll trap. */}
+          <ul className="divide-y divide-bone-200 @3xl:hidden">
+            {rows.map((c) => {
+              const breached = mandateBreached(c, now)
+              return (
+                <li key={c.id}>
+                  <button
+                    type="button"
+                    onClick={() => onOpen(c.id)}
+                    className={cn(
+                      'w-full px-3 py-3 text-left',
+                      breached && !isRecorded(c) && 'bg-[#fbeae8]/50',
+                    )}
+                  >
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="font-mono text-[11px] font-medium text-[var(--accent-deep)]">
+                        {c.ref}
+                      </span>
+                      <StageChip stage={c.stage} />
+                    </div>
+                    <div className="mt-1.5 flex items-baseline justify-between gap-3">
+                      <Subject c={c} />
+                      <span className="shrink-0 text-[11px] text-slate-400">
+                        {shortDate(c.reportedAt)}
+                      </span>
+                    </div>
+                    <p className="mt-1 text-[12px] text-slate-700">{c.offence}</p>
+                    <div className="mt-1.5">
+                      <MandateClock c={c} now={now} />
+                    </div>
+                  </button>
+                </li>
+              )
+            })}
+          </ul>
+          </>
         )}
       </div>
     </div>
@@ -455,8 +494,8 @@ export function Coordination() {
   }
 
   return (
-    <div className="flex h-full flex-col gap-4 overflow-hidden">
-      <div className="flex items-end justify-between gap-4">
+    <div className="flex h-full flex-col gap-4 overflow-y-auto @3xl:overflow-hidden">
+      <div className="flex flex-col gap-3 @2xl:flex-row @2xl:items-end @2xl:justify-between @2xl:gap-4">
         <div>
           <h1 className="text-[19px] font-semibold text-slate-ink">
             Downstream coordination
@@ -488,7 +527,7 @@ export function Coordination() {
         </div>
       </div>
 
-      <div className="min-h-0 flex-1 space-y-3 overflow-y-auto">
+      <div className="space-y-3 @3xl:min-h-0 @3xl:flex-1 @3xl:overflow-y-auto">
         {byParty.length === 0 && (
           <Empty
             icon={<Check size={26} />}
@@ -511,7 +550,7 @@ export function Coordination() {
               {items.map((t) => {
                 const c = state.cases.find((x) => x.id === t.caseId)!
                 return (
-                  <li key={t.id} className="flex items-start gap-4 px-4 py-3">
+                  <li key={t.id} className="flex flex-col items-start gap-3 px-4 py-3 @xl:flex-row @xl:gap-4">
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-2">
                         <span className="font-mono text-[10.5px] font-medium text-[var(--accent-deep)]">
@@ -576,7 +615,7 @@ export function Dashboard({ onOpen }: { onOpen: (caseId: string) => void }) {
     .slice(0, 14)
 
   return (
-    <div className="flex h-full flex-col gap-4 overflow-hidden">
+    <div className="flex h-full flex-col gap-4 overflow-y-auto @3xl:overflow-hidden">
       <div>
         <h1 className="text-[19px] font-semibold text-slate-ink">Dashboard view</h1>
         <p className="mt-0.5 text-[12px] text-slate-500">
@@ -585,7 +624,7 @@ export function Dashboard({ onOpen }: { onOpen: (caseId: string) => void }) {
         </p>
       </div>
 
-      <div className="flex gap-3">
+      <div className="grid grid-cols-2 gap-2.5 @2xl:grid-cols-3 @4xl:grid-cols-5 @4xl:gap-3">
         <KPI value={s.open} label="Open cases" tone="accent" hint="Not yet closed" />
         <KPI
           value={s.awaitingDeliberation}
@@ -613,9 +652,9 @@ export function Dashboard({ onOpen }: { onOpen: (caseId: string) => void }) {
         />
       </div>
 
-      <div className="grid min-h-0 flex-1 grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)] gap-4">
-        <div className="flex min-h-0 flex-col gap-4">
-          <Card className="flex min-h-0 flex-1 flex-col">
+      <div className="grid gap-4 @3xl:min-h-0 @3xl:flex-1 @3xl:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)]">
+        <div className="flex flex-col gap-4 @3xl:min-h-0">
+          <Card className="flex flex-col @3xl:min-h-0 @3xl:flex-1">
             <CardHead
               title="Against the clock"
               sub="Cases with no award recorded yet, oldest incident first"
@@ -625,7 +664,7 @@ export function Dashboard({ onOpen }: { onOpen: (caseId: string) => void }) {
                 </Pill>
               }
             />
-            <div className="min-h-0 flex-1 overflow-y-auto">
+            <div className="max-h-[380px] overflow-y-auto @3xl:max-h-none @3xl:min-h-0 @3xl:flex-1">
               {atRisk.length === 0 ? (
                 <Empty icon={<Check size={24} />} title="Everything is recorded" />
               ) : (
@@ -637,7 +676,7 @@ export function Dashboard({ onOpen }: { onOpen: (caseId: string) => void }) {
                         onClick={() => onOpen(c.id)}
                         className="w-full px-4 py-3 text-left hover:bg-bone-50"
                       >
-                        <div className="flex items-start justify-between gap-3">
+                        <div className="flex flex-col gap-2.5 @xl:flex-row @xl:items-start @xl:justify-between @xl:gap-3">
                           <div className="min-w-0">
                             <div className="flex items-center gap-2">
                               <span className="font-mono text-[10.5px] font-medium text-[var(--accent-deep)]">
@@ -652,7 +691,7 @@ export function Dashboard({ onOpen }: { onOpen: (caseId: string) => void }) {
                               </span>
                             </p>
                           </div>
-                          <span className="w-48 shrink-0">
+                          <span className="shrink-0 @xl:w-48">
                             <MandateClock c={c} now={now} variant="block" />
                           </span>
                         </div>
@@ -669,7 +708,7 @@ export function Dashboard({ onOpen }: { onOpen: (caseId: string) => void }) {
             <ul className="space-y-2 p-4">
               {tally.map(([name, n]) => (
                 <li key={name} className="flex items-center gap-3">
-                  <span className="w-56 shrink-0 truncate text-[11.5px] text-slate-600">
+                  <span className="w-32 shrink-0 truncate text-[11.5px] text-slate-600 @2xl:w-56">
                     {name}
                   </span>
                   <Bar value={(n / maxTally) * 100} className="flex-1" />
@@ -682,9 +721,9 @@ export function Dashboard({ onOpen }: { onOpen: (caseId: string) => void }) {
           </Card>
         </div>
 
-        <Card className="flex min-h-0 flex-col">
+        <Card className="flex flex-col @3xl:min-h-0">
           <CardHead title="Recent activity" sub="Every stage change, appended" />
-          <div className="min-h-0 flex-1 overflow-y-auto">
+          <div className="max-h-[420px] overflow-y-auto @3xl:max-h-none @3xl:min-h-0 @3xl:flex-1">
             <ul className="divide-y divide-bone-200">
               {recent.map((entry, i) => (
                 <li key={i} className="flex gap-2.5 px-4 py-2.5">

@@ -31,14 +31,16 @@ const LEADER_ONLY: FuaScreen[] = ['overview', 'register', 'raise']
 const NAV: {
   id: FuaScreen
   label: string
+  /** Tab-bar label — the full one doesn't fit on a phone. */
+  short: string
   icon: ReactNode
   leaderOnly?: boolean
 }[] = [
-  { id: 'overview', label: 'Overview', icon: <Home size={15} />, leaderOnly: true },
-  { id: 'register', label: 'FUA register', icon: <Clipboard size={15} />, leaderOnly: true },
-  { id: 'my-subtasks', label: 'My subtasks', icon: <Doc size={15} /> },
-  { id: 'raise', label: 'Raise an FUA', icon: <Plus size={15} />, leaderOnly: true },
-  { id: 'activity', label: 'Audit trail', icon: <Chart size={15} /> },
+  { id: 'overview', label: 'Overview', short: 'Overview', icon: <Home size={17} />, leaderOnly: true },
+  { id: 'register', label: 'FUA register', short: 'Register', icon: <Clipboard size={17} />, leaderOnly: true },
+  { id: 'my-subtasks', label: 'My subtasks', short: 'Mine', icon: <Doc size={17} /> },
+  { id: 'raise', label: 'Raise an FUA', short: 'Raise', icon: <Plus size={17} />, leaderOnly: true },
+  { id: 'activity', label: 'Audit trail', short: 'Trail', icon: <Chart size={17} /> },
 ]
 
 /* ------------------------------------------------------------ Teams chrome */
@@ -56,8 +58,8 @@ function TeamsChrome({ children }: { children: ReactNode }) {
 
   return (
     <div className="flex h-full w-full">
-      {/* app rail */}
-      <nav className="flex w-14 shrink-0 flex-col items-center gap-1 bg-[#2b2b32] py-2">
+      {/* app rail — Teams desktop only; the mobile client drops it */}
+      <nav className="hidden w-14 shrink-0 flex-col items-center gap-1 bg-[#2b2b32] py-2 @3xl:flex">
         {RAIL.map((item) => (
           <span
             key={item.label}
@@ -83,7 +85,7 @@ function TeamsChrome({ children }: { children: ReactNode }) {
 
       <div className="flex min-w-0 flex-1 flex-col">
         {/* search bar */}
-        <div className="flex h-10 shrink-0 items-center gap-3 border-b border-bone-300 bg-bone-200/70 px-3">
+        <div className="hidden h-10 shrink-0 items-center gap-3 border-b border-bone-300 bg-bone-200/70 px-3 @3xl:flex">
           <Menu size={15} className="text-slate-500" />
           <div className="mx-auto flex w-[420px] items-center gap-2 rounded-sm border border-bone-300 bg-white px-2.5 py-1">
             <Search size={13} className="text-slate-400" />
@@ -95,23 +97,28 @@ function TeamsChrome({ children }: { children: ReactNode }) {
         </div>
 
         {/* channel header + tab strip */}
-        <div className="shrink-0 border-b border-bone-300 bg-white px-5 pt-2.5">
+        <div className="shrink-0 border-b border-bone-300 bg-white px-3 pt-2.5 @3xl:px-5">
           <div className="flex items-center gap-2">
-            <span className="flex h-6 w-6 items-center justify-center rounded-sm bg-[#5b5fc7] text-[10px] font-bold text-white">
+            <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-sm bg-[#5b5fc7] text-[10px] font-bold text-white">
               15
             </span>
-            <span className="text-[13px] font-semibold text-slate-ink">
+            <span className="truncate text-[13px] font-semibold text-slate-ink">
               15C4I Innovation Branch
             </span>
-            <span className="text-slate-300">›</span>
-            <span className="text-[12.5px] text-slate-500">General</span>
+            <span className="hidden text-slate-300 @xl:inline">›</span>
+            <span className="hidden text-[12.5px] text-slate-500 @xl:inline">
+              General
+            </span>
+            <span className="ml-auto shrink-0 text-[11px] text-slate-500 @3xl:hidden">
+              {me.rank} {me.name.split(' ')[0]}
+            </span>
           </div>
-          <div className="mt-2 flex items-center gap-1">
+          <div className="-mx-3 mt-2 flex items-center gap-1 overflow-x-auto px-3 @3xl:mx-0 @3xl:px-0">
             {['Posts', 'Files', 'FUA Tracker', 'Wiki'].map((t) => (
               <span
                 key={t}
                 className={cn(
-                  '-mb-px border-b-2 px-3 py-1.5 text-[12px]',
+                  '-mb-px shrink-0 border-b-2 px-3 py-1.5 text-[12px]',
                   t === 'FUA Tracker'
                     ? 'border-[#5b5fc7] font-semibold text-[#3f43a0]'
                     : 'border-transparent text-slate-500',
@@ -160,9 +167,9 @@ export function FuaApp({ initialScreen }: { initialScreen?: FuaScreen }) {
     <AppShell theme={THEMES.fua}>
       <ToastHost>
         <TeamsChrome>
-          <div className="flex h-full min-h-0">
+          <div className="flex h-full min-h-0 flex-col @3xl:flex-row">
             {/* app nav */}
-            <nav className="flex w-52 shrink-0 flex-col border-r border-bone-300 bg-bone-50 py-3">
+            <nav className="hidden w-52 shrink-0 flex-col border-r border-bone-300 bg-bone-50 py-3 @3xl:flex">
               <div className="px-4 pb-3">
                 <span className="label text-slate-400">FUA Tracker</span>
                 <p className="mt-1.5 text-[11px] leading-snug text-slate-500">
@@ -226,7 +233,7 @@ export function FuaApp({ initialScreen }: { initialScreen?: FuaScreen }) {
             </nav>
 
             {/* screen */}
-            <main className="min-w-0 flex-1 overflow-hidden bg-bone-100 p-5">
+            <main className="min-h-0 min-w-0 flex-1 overflow-hidden bg-bone-100 p-3 @3xl:p-5">
               {screen === 'overview' && <Overview onOpen={setOpenSubtask} />}
               {screen === 'register' && <Register onOpen={setOpenSubtask} />}
               {screen === 'my-subtasks' && <MySubtasks onOpen={setOpenSubtask} />}
@@ -235,6 +242,34 @@ export function FuaApp({ initialScreen }: { initialScreen?: FuaScreen }) {
               )}
               {screen === 'activity' && <Activity />}
             </main>
+
+            {/* mobile tab bar — the Teams phone client pattern */}
+            <nav className="flex shrink-0 border-t border-bone-300 bg-white @3xl:hidden">
+              {visible.map((item) => {
+                const active = screen === item.id
+                return (
+                  <button
+                    key={item.id}
+                    type="button"
+                    onClick={() => setScreen(item.id)}
+                    className={cn(
+                      'relative flex flex-1 flex-col items-center gap-0.5 py-2 text-[9.5px] leading-tight font-medium transition-colors',
+                      active ? 'text-[var(--accent)]' : 'text-slate-400',
+                    )}
+                  >
+                    <span className="relative">
+                      {item.icon}
+                      {item.id === 'my-subtasks' && myOpen > 0 && (
+                        <span className="numerals absolute -top-1.5 -right-2.5 rounded-full bg-[var(--accent)] px-1 text-[9px] font-bold text-white">
+                          {myOpen}
+                        </span>
+                      )}
+                    </span>
+                    {item.short}
+                  </button>
+                )
+              })}
+            </nav>
           </div>
         </TeamsChrome>
 

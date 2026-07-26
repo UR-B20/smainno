@@ -29,7 +29,7 @@ export function AdminApp({ initialScreen }: { initialScreen?: AdminScreen }) {
   return (
     <div className="flex h-full w-full flex-col bg-bone-100">
       {/* brand bar — navy is the scheduled/active phase, gold is the critical path */}
-      <header className="flex h-12 shrink-0 items-center gap-3 bg-[var(--accent)] px-4 text-white">
+      <header className="flex h-12 shrink-0 items-center gap-2 overflow-x-auto bg-[var(--accent)] px-3 text-white @3xl:gap-3 @3xl:px-4">
         <span className="flex h-7 w-7 items-center justify-center rounded-sm bg-[#c9a227] text-[#12355b]">
           <Shield size={16} />
         </span>
@@ -39,27 +39,27 @@ export function AdminApp({ initialScreen }: { initialScreen?: AdminScreen }) {
             Administration
           </p>
         </div>
-        <span className="ml-4 h-5 w-px bg-white/20" />
-        <nav className="flex items-center gap-1">
+        <span className="ml-2 hidden h-5 w-px bg-white/20 @2xl:block @3xl:ml-4" />
+        <nav className="flex shrink-0 items-center gap-1">
           {NAV.map((item) => (
             <button
               key={item.id}
               type="button"
               onClick={() => setScreen(item.id)}
               className={cn(
-                'flex items-center gap-2 rounded-sm px-3 py-1.5 text-[12px] font-medium transition-colors',
+                'flex shrink-0 items-center gap-2 rounded-sm px-2.5 py-1.5 text-[12px] font-medium transition-colors',
                 screen === item.id
                   ? 'bg-white/15 text-white'
                   : 'text-white/65 hover:bg-white/10 hover:text-white',
               )}
             >
               {item.icon}
-              {item.label}
+              <span className="hidden @2xl:inline">{item.label}</span>
             </button>
           ))}
         </nav>
 
-        <div className="ml-auto flex items-center gap-3 text-[11px]">
+        <div className="ml-auto hidden items-center gap-3 text-[11px] @3xl:flex">
           <span className="flex items-center gap-1.5 text-white/70">
             <span className="h-1.5 w-1.5 rounded-full bg-[#c9a227]" />
             {stats.completionPct}% today
@@ -77,7 +77,7 @@ export function AdminApp({ initialScreen }: { initialScreen?: AdminScreen }) {
         </div>
       </header>
 
-      <main className="min-h-0 flex-1 overflow-hidden p-5">
+      <main className="min-h-0 flex-1 overflow-hidden p-3 @3xl:p-5">
         {screen === 'dashboard' && <AdminDashboard />}
         {screen === 'builder' && <TemplateBuilder />}
         {screen === 'schedules' && <Schedules />}

@@ -64,7 +64,8 @@ export function CheckerApp({ initialTab }: { initialTab?: Nav }) {
   }
 
   return (
-    <div className="flex h-full flex-col bg-bone-100">
+    // Phone-shaped by design — capped so it doesn't sprawl on a tablet.
+    <div className="mx-auto flex h-full w-full max-w-[560px] flex-col bg-bone-100">
       <header className="shrink-0 bg-[var(--accent)] px-4 pt-3 pb-3 text-white">
         <div className="flex items-center justify-between">
           <div>

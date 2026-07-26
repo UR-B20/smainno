@@ -154,9 +154,9 @@ export function TemplateBuilder() {
     }))
 
   return (
-    <div className="grid h-full grid-cols-[250px_minmax(0,1fr)] gap-4 overflow-hidden">
+    <div className="flex h-full flex-col gap-4 overflow-y-auto @3xl:grid @3xl:grid-cols-[250px_minmax(0,1fr)] @3xl:overflow-hidden">
       {/* ------------------------------------------------------ template list */}
-      <Card className="flex min-h-0 flex-col">
+      <Card className="flex flex-col @3xl:min-h-0">
         <div className="shrink-0 border-b border-bone-200 p-3">
           <div className="relative">
             <Search size={13} className="absolute top-1/2 left-2.5 -translate-y-1/2 text-slate-400" />
@@ -168,7 +168,7 @@ export function TemplateBuilder() {
             />
           </div>
         </div>
-        <ul className="min-h-0 flex-1 overflow-y-auto">
+        <ul className="max-h-[260px] overflow-y-auto @3xl:max-h-none @3xl:min-h-0 @3xl:flex-1">
           {list.map((t) => (
             <li key={t.id}>
               <button
@@ -210,7 +210,7 @@ export function TemplateBuilder() {
       </Card>
 
       {/* ---------------------------------------------------------- structure */}
-      <Card className="flex min-h-0 flex-col">
+      <Card className="flex flex-col @3xl:min-h-0">
         <CardHead
           title={
             <input
@@ -255,7 +255,7 @@ export function TemplateBuilder() {
           }
         />
 
-        <div className="min-h-0 flex-1 space-y-2 overflow-y-auto p-4">
+        <div className="space-y-2 p-3 @3xl:min-h-0 @3xl:flex-1 @3xl:overflow-y-auto @3xl:p-4">
           {template.pages.map((page, pi) => {
             const open = openPages.includes(page.id)
             return (
@@ -505,7 +505,7 @@ function ItemEditor({
 
       {open && (
         <div className="space-y-3 border-t border-bone-200 bg-bone-50 p-3">
-          <div className="grid grid-cols-[minmax(0,1fr)_140px] gap-2">
+          <div className="grid gap-2 @xl:grid-cols-[minmax(0,1fr)_140px]">
             <Field label="Question">
               <Input value={item.label} onChange={(e) => patch({ label: e.target.value })} />
             </Field>
@@ -639,7 +639,7 @@ function ItemEditor({
                     </Select>
                     <span>also ask</span>
                   </div>
-                  <div className="grid grid-cols-[minmax(0,1fr)_120px] gap-2">
+                  <div className="grid gap-2 @xl:grid-cols-[minmax(0,1fr)_120px]">
                     <Input
                       value={item.followUp.item.label}
                       onChange={(e) =>

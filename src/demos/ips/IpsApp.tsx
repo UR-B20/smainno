@@ -14,11 +14,18 @@ export type IpsScreen =
   | 'coordination'
   | 'dashboard'
 
-const NAV: { id: IpsScreen; label: string; icon: ReactNode; hint: string }[] = [
-  { id: 'intake', label: 'File a report', icon: <Doc size={15} />, hint: 'FormSG' },
-  { id: 'register', label: 'Case register', icon: <List size={15} />, hint: 'SharePoint list' },
-  { id: 'coordination', label: 'Coordination', icon: <Send size={15} />, hint: 'Downstream' },
-  { id: 'dashboard', label: 'Dashboard', icon: <Chart size={15} />, hint: 'Oversight' },
+const NAV: {
+  id: IpsScreen
+  label: string
+  /** Tab-bar label — the full one doesn't fit on a phone. */
+  short: string
+  icon: ReactNode
+  hint: string
+}[] = [
+  { id: 'intake', label: 'File a report', short: 'Report', icon: <Doc size={17} />, hint: 'FormSG' },
+  { id: 'register', label: 'Case register', short: 'Register', icon: <List size={17} />, hint: 'SharePoint list' },
+  { id: 'coordination', label: 'Coordination', short: 'Coord', icon: <Send size={17} />, hint: 'Downstream' },
+  { id: 'dashboard', label: 'Dashboard', short: 'Board', icon: <Chart size={17} />, hint: 'Oversight' },
 ]
 
 export function IpsApp({ initialScreen }: { initialScreen?: IpsScreen }) {
@@ -54,30 +61,34 @@ export function IpsApp({ initialScreen }: { initialScreen?: IpsScreen }) {
           </div>
 
           {/* agency header */}
-          <header className="flex h-14 shrink-0 items-center gap-3 border-b border-bone-300 bg-white px-5">
-            <span className="flex h-8 w-8 items-center justify-center rounded-sm bg-[var(--accent)] text-white">
+          <header className="flex h-12 shrink-0 items-center gap-3 border-b border-bone-300 bg-white px-3 @3xl:h-14 @3xl:px-5">
+            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-sm bg-[var(--accent)] text-white">
               <Shield size={17} />
             </span>
-            <div>
-              <p className="text-[14px] leading-tight font-semibold text-slate-ink">
+            <div className="min-w-0">
+              <p className="truncate text-[14px] leading-tight font-semibold text-slate-ink">
                 Digital IPS
               </p>
-              <p className="text-[10px] tracking-[0.1em] text-slate-400 uppercase">
+              <p className="hidden truncate text-[10px] tracking-[0.1em] text-slate-400 uppercase @xl:block">
                 Informal Punishment System · 15C4I
               </p>
             </div>
 
-            <div className="ml-auto flex items-center gap-3">
+            <div className="ml-auto flex shrink-0 items-center gap-3">
               {s.breached > 0 && (
-                <Pill tone="danger" dot>
-                  {s.breached} mandate breach{s.breached === 1 ? '' : 'es'}
-                </Pill>
+                <span className="hidden @2xl:block">
+                  <Pill tone="danger" dot>
+                    {s.breached} mandate breach{s.breached === 1 ? '' : 'es'}
+                  </Pill>
+                </span>
               )}
               {s.pendingAcks > 0 && (
-                <Pill tone="warn">{s.pendingAcks} pending acks</Pill>
+                <span className="hidden @3xl:block">
+                  <Pill tone="warn">{s.pendingAcks} pending acks</Pill>
+                </span>
               )}
-              <div className="flex items-center gap-2 border-l border-bone-300 pl-3">
-                <div className="text-right">
+              <div className="flex items-center gap-2 @2xl:border-l @2xl:border-bone-300 @2xl:pl-3">
+                <div className="hidden text-right @xl:block">
                   <p className="text-[11.5px] font-medium text-slate-ink">
                     {me.rank} {me.name}
                   </p>
@@ -88,9 +99,9 @@ export function IpsApp({ initialScreen }: { initialScreen?: IpsScreen }) {
             </div>
           </header>
 
-          <div className="flex min-h-0 flex-1">
+          <div className="flex min-h-0 flex-1 flex-col @3xl:flex-row">
             {/* nav */}
-            <nav className="flex w-56 shrink-0 flex-col border-r border-bone-300 bg-bone-50 py-3">
+            <nav className="hidden w-56 shrink-0 flex-col border-r border-bone-300 bg-bone-50 py-3 @3xl:flex">
               <div className="px-4 pb-3">
                 <span className="label text-slate-400">Pipeline</span>
               </div>
@@ -160,7 +171,7 @@ export function IpsApp({ initialScreen }: { initialScreen?: IpsScreen }) {
               </div>
             </nav>
 
-            <main className="min-w-0 flex-1 overflow-hidden bg-bone-100 p-5">
+            <main className="min-h-0 min-w-0 flex-1 overflow-hidden bg-bone-100 p-3 @3xl:p-5">
               {screen === 'intake' && <Intake onFiled={openCase} />}
               {screen === 'register' && <Register onOpen={openCase} />}
               {screen === 'coordination' && <Coordination />}
@@ -170,6 +181,29 @@ export function IpsApp({ initialScreen }: { initialScreen?: IpsScreen }) {
                   <Deliberation caseId={caseId} onBack={() => setScreen('register')} />
                 ) : null)}
             </main>
+
+            {/* mobile tab bar */}
+            <nav className="flex shrink-0 border-t border-bone-300 bg-white @3xl:hidden">
+              {NAV.map((item) => {
+                const active =
+                  screen === item.id ||
+                  (screen === 'deliberate' && item.id === 'register')
+                return (
+                  <button
+                    key={item.id}
+                    type="button"
+                    onClick={() => setScreen(item.id)}
+                    className={cn(
+                      'flex flex-1 flex-col items-center gap-0.5 py-2 text-[9.5px] leading-tight font-medium transition-colors',
+                      active ? 'text-[var(--accent)]' : 'text-slate-400',
+                    )}
+                  >
+                    {item.icon}
+                    {item.short}
+                  </button>
+                )
+              })}
+            </nav>
           </div>
         </div>
       </ToastHost>

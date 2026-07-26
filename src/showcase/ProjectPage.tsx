@@ -2,6 +2,7 @@ import { useCallback, useState } from 'react'
 import { Link, Navigate, useParams } from 'react-router-dom'
 import { cn } from '@/lib/cn'
 import { useReveal } from '@/hooks/useReveal'
+import { useIsHandheld } from '@/hooks/useMedia'
 import {
   ACCENT,
   BtnLink,
@@ -326,6 +327,12 @@ function ReplicaSection({
   onJump: (screen?: string) => void
 }) {
   const a = ACCENT[project.accent]
+  const handheld = useIsHandheld()
+
+  const chips = project.screens.filter((s) => s.demoScreen)
+  const chipLabel = (s: ScreenSpec) =>
+    s.eyebrow.split('·').pop()?.trim() ?? s.title
+
   return (
     <section
       id="replica"
@@ -339,10 +346,9 @@ function ReplicaSection({
           </h2>
         </div>
 
-        <div className="flex flex-wrap gap-2">
-          {project.screens
-            .filter((s) => s.demoScreen)
-            .map((s) => (
+        {!handheld && (
+          <div className="flex flex-wrap gap-2">
+            {chips.map((s) => (
               <button
                 key={s.title}
                 type="button"
@@ -354,13 +360,63 @@ function ReplicaSection({
                     : 'border-ink-600 text-ink-400 hover:border-ink-500 hover:text-[#c9d5e5]',
                 )}
               >
-                {s.eyebrow.split('·').pop()?.trim() ?? s.title}
+                {chipLabel(s)}
               </button>
             ))}
-        </div>
+          </div>
+        )}
       </div>
 
-      <Replica project={project} screen={screen} />
+      {handheld ? (
+        // A 1280px app scaled into a phone column would be unreadable, so the
+        // replica opens as its own full-screen app instead.
+        <Panel ticks className="bg-ink-850/60">
+          <Link
+            to={`/demo/${project.id}`}
+            className="group flex items-center gap-4 border-b border-ink-700 p-6"
+          >
+            <span
+              className={cn(
+                'flex h-11 w-11 shrink-0 items-center justify-center rounded-xs border',
+                a.border,
+                a.text,
+              )}
+            >
+              <Play size={15} />
+            </span>
+            <span className="min-w-0 flex-1">
+              <span className="block text-[17px] font-medium text-[#eaf1f9]">
+                Open the {project.name} replica
+              </span>
+              <span className="mt-1 block text-[12.5px] leading-relaxed text-[#8b9ab1]">
+                Runs full screen on your phone, with demo data you can change.
+              </span>
+            </span>
+            <ArrowRight
+              size={18}
+              className="shrink-0 text-ink-500 transition-transform group-hover:translate-x-1"
+            />
+          </Link>
+
+          <ul className="divide-y divide-ink-800">
+            {chips.map((s) => (
+              <li key={s.title}>
+                <Link
+                  to={`/demo/${project.id}?screen=${s.demoScreen}`}
+                  className="flex items-center gap-3 px-6 py-3.5"
+                >
+                  <span className={cn('label shrink-0', a.text)}>
+                    {chipLabel(s)}
+                  </span>
+                  <ChevronRight size={14} className="ml-auto shrink-0 text-ink-500" />
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </Panel>
+      ) : (
+        <Replica project={project} screen={screen} />
+      )}
 
       <div className="mt-8 border-t border-ink-800 pt-8">
         <div className="flex flex-wrap items-baseline justify-between gap-4">

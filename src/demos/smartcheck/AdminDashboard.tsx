@@ -70,8 +70,8 @@ export function AdminDashboard() {
     )
 
   return (
-    <div className="flex h-full flex-col gap-4 overflow-hidden">
-      <div className="flex items-end justify-between gap-4">
+    <div className="flex h-full flex-col gap-4 overflow-y-auto @3xl:overflow-hidden">
+      <div className="flex flex-col gap-3 @2xl:flex-row @2xl:items-end @2xl:justify-between @2xl:gap-4">
         <div>
           <h1 className="text-[19px] font-semibold text-slate-ink">Dashboard</h1>
           <p className="mt-0.5 text-[12px] text-slate-500">
@@ -107,7 +107,7 @@ export function AdminDashboard() {
         </div>
       </div>
 
-      <div className="flex gap-3">
+      <div className="grid grid-cols-2 gap-2.5 @2xl:grid-cols-3 @4xl:grid-cols-5 @4xl:gap-3">
         <KPI
           value={`${stats.completionPct}%`}
           label="Completion"
@@ -120,14 +120,14 @@ export function AdminDashboard() {
         <KPI value={stats.skipped} label="Skipped" tone="neutral" hint="Reason recorded, excluded from rate" />
       </div>
 
-      <div className="grid min-h-0 flex-1 grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] gap-4">
+      <div className="grid gap-4 @3xl:min-h-0 @3xl:flex-1 @3xl:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)]">
         {/* teams for the selected day */}
-        <Card className="flex min-h-0 flex-col">
+        <Card className="flex flex-col @3xl:min-h-0">
           <CardHead
             title="By team"
             sub={`${occs.length} window${occs.length === 1 ? '' : 's'} on ${shortDate(day)}`}
           />
-          <div className="min-h-0 flex-1 overflow-y-auto">
+          <div className="max-h-[420px] overflow-y-auto @3xl:max-h-none @3xl:min-h-0 @3xl:flex-1">
             {state.teams.map((team) => (
               <TeamBlock
                 key={team.id}
@@ -141,12 +141,12 @@ export function AdminDashboard() {
         </Card>
 
         {/* latest answer per check */}
-        <Card className="flex min-h-0 flex-col">
+        <Card className="flex flex-col @3xl:min-h-0">
           <CardHead
             title="Latest answer per check"
             sub="Pick a template and an item — see what every team answered last"
           />
-          <div className="flex shrink-0 gap-2 border-b border-bone-200 px-4 py-2.5">
+          <div className="flex shrink-0 flex-col gap-2 border-b border-bone-200 px-4 py-2.5 @xl:flex-row">
             <Select
               value={templateId}
               onChange={(e) => {
@@ -178,7 +178,7 @@ export function AdminDashboard() {
             </Select>
           </div>
 
-          <div className="min-h-0 flex-1 overflow-y-auto">
+          <div className="max-h-[420px] overflow-x-auto overflow-y-auto @3xl:max-h-none @3xl:min-h-0 @3xl:flex-1">
             {!item || teamsWithTemplate.length === 0 ? (
               <Empty
                 icon={<Grid size={24} />}
@@ -186,7 +186,7 @@ export function AdminDashboard() {
                 body="Assign the template to a team on the Schedules screen."
               />
             ) : (
-              <table className="w-full text-[12px]">
+              <table className="w-full min-w-[520px] text-[12px]">
                 <thead className="sticky top-0 bg-white">
                   <tr className="border-b border-bone-200 text-left text-slate-400">
                     <th className="px-4 py-2 label font-medium">Team</th>
