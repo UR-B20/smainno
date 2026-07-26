@@ -1,8 +1,11 @@
-name: Deploy showcase to GitHub Pages
+name: Build and deploy showcase
 
 on:
   push:
     branches: [main]
+  # Build (but don't deploy) on pull requests, so a broken build is caught
+  # before it reaches main rather than after.
+  pull_request:
   workflow_dispatch:
 
 permissions:
@@ -12,7 +15,7 @@ permissions:
 
 # One deploy at a time; let an in-flight run finish rather than cancelling it.
 concurrency:
-  group: pages
+  group: pages-${{ github.ref }}
   cancel-in-progress: false
 
 jobs:
@@ -28,19 +31,23 @@ jobs:
 
       - run: npm ci
 
-      - name: Typecheck, lint and build
-        run: |
-          npm run lint
-          npm run build
+      - name: Lint
+        run: npm run lint
+
+      - name: Typecheck and build
+        run: npm run build
 
       - uses: actions/configure-pages@v5
+        if: github.event_name != 'pull_request'
 
       - uses: actions/upload-pages-artifact@v3
+        if: github.event_name != 'pull_request'
         with:
           path: dist
 
   deploy:
     needs: build
+    if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     environment:
       name: github-pages
