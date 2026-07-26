@@ -171,10 +171,10 @@ function seed(t0: number): FuaState {
     {
       id: 'f3',
       ref: 'FUA-2026-013',
-      title: 'Prepare SMA Innovation Huddle capability showcase',
+      title: 'Prepare the capability showcase for the Innovation Review',
       detail:
         'Assemble the three-project showcase, rehearse the walkthrough and confirm the classification marking on every slide.',
-      meeting: 'SMA Innovation Huddle',
+      meeting: 'Innovation Review',
       meetingAt: t0 - 5 * DAY,
       raisedBy: 'p1',
       priority: 'Medium',

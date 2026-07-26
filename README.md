@@ -1,8 +1,7 @@
 # Innovation Projects · Capability Showcase
 
-An interactive showcase for the three projects presented at the **SMA Innovation
-Huddle (15C4I)** on 21 July 2026 — rebuilt from the deck
-`SMA INNOVATION HUDDLE_15C4I.pptx` as something you can actually use.
+An interactive showcase for three innovation projects, dated 27 July 26 —
+rebuilt as something you can actually use.
 
 Each project has a **working replica**: a real application with seeded demo
 data, so a reviewer can raise the record, post the update, run the check and
@@ -84,10 +83,9 @@ opens the same replica full-window.
 
 ## What is faithful, and what is invented
 
-Faithful to the deck: the problem statements, the screen callouts (the A/B/C
-annotations), the six-step FUA loop, the SmartCheck life cycle and its
-navy/gold/red legend, and the speaker's notes, which are reproduced verbatim on
-the project pages.
+Faithful to the source material: the problem statements, the screen callouts
+(the A/B/C annotations), the six-step FUA loop, and the SmartCheck life cycle
+with its navy/gold/red legend.
 
 Where the deck described a *behaviour*, the replica implements it rather than
 illustrating it:

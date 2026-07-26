@@ -2,9 +2,7 @@
  * Source of truth for the showcase narrative.
  *
  * Every string in this file is lifted from "SMA INNOVATION HUDDLE_15C4I.pptx"
- * (21 July 2026). Where the deck carried speaker notes they are kept verbatim
- * as `narration`, because they explain the design intent behind each screen far
- * better than any paraphrase would.
+ * (27 July 26).
  */
 
 export type ProjectId = 'digital-ips' | 'fua-tracker' | 'smartcheck'
@@ -15,8 +13,6 @@ export interface ScreenSpec {
   title: string
   /** The A / B / C callouts printed beside the screenshot in the deck. */
   callouts: { key: string; title: string; body: string }[]
-  /** Verbatim speaker note. */
-  narration?: string
   /** Route hash that deep-links the live replica to this screen. */
   demoScreen?: string
 }
@@ -60,12 +56,18 @@ export interface Project {
   tryThis: string[]
 }
 
+export const POC = {
+  appointment: 'Division Sergeant Major',
+  formation: '2 PDF',
+  blurb:
+    'To find out more about any of these projects, or if your unit is interested in onboarding one, get in touch.',
+} as const
+
 export const DECK = {
   title: 'Innovation Projects',
   subtitle: 'Capability Showcase',
-  date: '21 July 2026',
+  date: '27 July 26',
   classification: 'OFFICIAL / (OPEN)',
-  unit: 'SMA Innovation Huddle · 15C4I',
 } as const
 
 export const PROJECTS: Project[] = [
@@ -320,8 +322,6 @@ export const PROJECTS: Project[] = [
             body: 'Every status change, straight from the immutable update log.',
           },
         ],
-        narration:
-          'This is what a team leader sees first. It’s a dashboard, not a launcher. Top row: the four numbers that matter — open FUAs, due within 7 days, overdue, completed. The ‘Needs attention’ panel pulls everything overdue or blocked into one triage list. On the right, a live activity ledger reads straight from the audit log, so you can see who did what without opening anything. Members don’t see the leader-only items — the menu adapts to your role.',
         demoScreen: 'overview',
       },
       {
@@ -344,8 +344,6 @@ export const PROJECTS: Project[] = [
             body: 'Open any row to post progress — no hunting through lists.',
           },
         ],
-        narration:
-          'This is the screen most of you will live in — it’s just your work. Everything assigned to you, grouped by status, with live counts on the tabs. The colour coding does the nagging for you: a red edge means it’s overdue, amber means it’s due within a week, and a brass tick flags high priority. Tap any row to post an update. That’s it — you don’t need to understand the rest of the system to do your part.',
         demoScreen: 'my-subtasks',
       },
       {
@@ -368,8 +366,6 @@ export const PROJECTS: Project[] = [
             body: 'Each update is a timestamped, immutable line in the audit trail.',
           },
         ],
-        narration:
-          'The heart of the app. When you open a subtask, the locked ‘tasking’ panel on the left keeps the context in front of you: the reference, the due date, and the actual last entry, so you’re never guessing. You pick the new status and the app shows the transition — here, In Progress to Blocked — before you commit. The bit that matters for us: nothing is overwritten. Every update is appended as its own timestamped, immutable record. You build history; you never erase it. That’s the audit trail.',
         demoScreen: 'my-subtasks',
       },
       {
@@ -392,14 +388,12 @@ export const PROJECTS: Project[] = [
             body: 'The FUA number is assigned on commit — no manual numbering to get wrong.',
           },
         ],
-        narration:
-          'This is how a leader creates a new action. It’s laid out like a work order — numbered sections for particulars, meeting context, and priority & timeline, so nothing’s forgotten. The panel on the right is a live ‘before you commit’ checklist: notice the commit button is greyed out because the due date is still empty. You literally can’t raise a half-finished FUA. And the reference number is assigned automatically on commit — no manual numbering. Step two, assigning subtasks, reuses the same screen.',
         demoScreen: 'raise',
       },
     ],
     closing: {
       title: 'Use cases & onboarding',
-      body: 'The best part: there’s almost nothing to learn. It lives in Teams — open it like any other tab. Where we are: the data foundations are built and tested; the app and the automation you saw are being wired up now. Next is a pilot with this team, and that’s the ask — I want your questions, ideas, and gripes, because we can still shape it before it goes wider.',
+      body: 'The best part: there’s almost nothing to learn. It lives in Teams — open it like any other tab. Where we are: the data foundations are built and tested; the app and the automation you saw are being wired up now.',
     },
     tryThis: [
       'Raise an FUA — the commit button stays locked until the live checklist is satisfied, and the reference number is assigned for you.',
