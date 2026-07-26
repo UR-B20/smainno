@@ -22,6 +22,7 @@ import {
   Play,
 } from '@/components/icons'
 import { POC, PROJECTS, PROJECT_BY_ID } from '@/data/deck'
+import { SlideRef } from './SlideRef'
 import type { Project, ProjectId, ScreenSpec } from '@/data/deck'
 import { FuaTrackerDemo } from '@/demos/fua'
 import type { FuaScreen } from '@/demos/fua/FuaApp'
@@ -510,6 +511,14 @@ function ScreenBlock({
                 className="transition-transform duration-200 group-hover:translate-x-0.5"
               />
             </button>
+          )}
+
+          {spec.slide && (
+            <SlideRef
+              projectId={project.id}
+              screenKey={spec.slide}
+              className="mt-7"
+            />
           )}
         </div>
 

@@ -15,6 +15,8 @@ export interface ScreenSpec {
   callouts: { key: string; title: string; body: string }[]
   /** Route hash that deep-links the live replica to this screen. */
   demoScreen?: string
+  /** Looks up `public/slides/<project-id>-<slide>.png`, if that file exists. */
+  slide?: string
 }
 
 export interface Project {
@@ -162,6 +164,7 @@ export const PROJECTS: Project[] = [
           },
         ],
         demoScreen: 'intake',
+        slide: 'intake',
       },
       {
         eyebrow: 'Screen 02 · Register',
@@ -184,6 +187,7 @@ export const PROJECTS: Project[] = [
           },
         ],
         demoScreen: 'register',
+        slide: 'register',
       },
       {
         eyebrow: 'Screen 03 · Deliberation',
@@ -206,6 +210,7 @@ export const PROJECTS: Project[] = [
           },
         ],
         demoScreen: 'deliberate',
+        slide: 'deliberate',
       },
       {
         eyebrow: 'Screen 04 · Coordination',
@@ -228,6 +233,30 @@ export const PROJECTS: Project[] = [
           },
         ],
         demoScreen: 'coordination',
+        slide: 'coordination',
+      },
+      {
+        eyebrow: 'Screen 05 · Oversight',
+        title: 'Dashboard — the unit-level view',
+        callouts: [
+          {
+            key: 'A',
+            title: 'Counts that answer the obvious questions',
+            body: 'How many cases, by offence, by subject, by award — read straight off the register rather than tallied by hand.',
+          },
+          {
+            key: 'B',
+            title: 'Execution status',
+            body: 'Completed against outstanding, so a commander can see what is still owed rather than only what was decided.',
+          },
+          {
+            key: 'C',
+            title: 'One source underneath',
+            body: 'The dashboard sits on the same register the intake feeds, so there is no second set of numbers to reconcile.',
+          },
+        ],
+        demoScreen: 'dashboard',
+        slide: 'dashboard',
       },
     ],
     tryThis: [
@@ -323,6 +352,7 @@ export const PROJECTS: Project[] = [
           },
         ],
         demoScreen: 'overview',
+        slide: 'overview',
       },
       {
         eyebrow: 'Screen 02 · For everyone',
@@ -345,6 +375,7 @@ export const PROJECTS: Project[] = [
           },
         ],
         demoScreen: 'my-subtasks',
+        slide: 'my-subtasks',
       },
       {
         eyebrow: 'Screen 03 · The one thing you do',
@@ -367,6 +398,7 @@ export const PROJECTS: Project[] = [
           },
         ],
         demoScreen: 'my-subtasks',
+        slide: 'post-update',
       },
       {
         eyebrow: 'Screen 04 · For team leaders',
@@ -389,6 +421,7 @@ export const PROJECTS: Project[] = [
           },
         ],
         demoScreen: 'raise',
+        slide: 'raise',
       },
     ],
     closing: {
@@ -498,6 +531,7 @@ export const PROJECTS: Project[] = [
           },
         ],
         demoScreen: 'checker',
+        slide: 'checker',
       },
       {
         eyebrow: 'Team · Issue tracker',
@@ -520,6 +554,7 @@ export const PROJECTS: Project[] = [
           },
         ],
         demoScreen: 'issues',
+        slide: 'issues',
       },
       {
         eyebrow: 'Admin · Dashboard',
@@ -542,6 +577,7 @@ export const PROJECTS: Project[] = [
           },
         ],
         demoScreen: 'dashboard',
+        slide: 'dashboard',
       },
       {
         eyebrow: 'Admin · Template builder',
@@ -564,6 +600,7 @@ export const PROJECTS: Project[] = [
           },
         ],
         demoScreen: 'builder',
+        slide: 'builder',
       },
       {
         eyebrow: 'Admin · Schedules & notifications',
@@ -586,6 +623,7 @@ export const PROJECTS: Project[] = [
           },
         ],
         demoScreen: 'schedules',
+        slide: 'schedules',
       },
     ],
     tryThis: [
