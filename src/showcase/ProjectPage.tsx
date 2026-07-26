@@ -3,6 +3,7 @@ import { Link, Navigate, useParams } from 'react-router-dom'
 import { cn } from '@/lib/cn'
 import { useReveal } from '@/hooks/useReveal'
 import { useIsHandheld } from '@/hooks/useMedia'
+import { scrollToId } from '@/lib/scrollToId'
 import {
   ACCENT,
   BtnLink,
@@ -312,13 +313,14 @@ function ProjectHero({ project }: { project: Project }) {
         </div>
 
         <div className="rise mt-9 flex flex-wrap items-center gap-3">
-          <a
-            href="#replica"
+          <button
+            type="button"
+            onClick={() => scrollToId('replica')}
             className="group inline-flex items-center justify-center gap-2 rounded-xs bg-brass-500 px-4 py-2.5 label-lg text-ink-950 transition-all duration-200 hover:bg-brass-400 hover:shadow-[0_0_28px_-8px_var(--color-brass-400)]"
           >
             <Play size={12} />
             Run the replica
-          </a>
+          </button>
           <BtnLink to={`/demo/${project.id}`} variant="outline">
             <External size={13} />
             Open full screen
